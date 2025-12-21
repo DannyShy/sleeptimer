@@ -22,11 +22,25 @@ struct SleepTimerApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {}
             
-            CommandGroup(after: .appSettings) {
-                Button("Appearance...") {
-                    // Settings will be shown via menu bar or window
+            CommandGroup(after: .appInfo) {
+                Menu("Appearance") {
+                    Button("Light") {
+                        appearanceManager.currentMode = .light
+                    }
+                    .keyboardShortcut("l", modifiers: [.command, .option])
+                    
+                    Button("Dark") {
+                        appearanceManager.currentMode = .dark
+                    }
+                    .keyboardShortcut("d", modifiers: [.command, .option])
+                    
+                    Button("System") {
+                        appearanceManager.currentMode = .system
+                    }
+                    .keyboardShortcut("s", modifiers: [.command, .option])
                 }
-                .keyboardShortcut(",", modifiers: .command)
+                
+                Divider()
             }
             
             CommandMenu("Timer") {
@@ -75,8 +89,27 @@ struct SleepTimerApp: App {
             sleepManager.cancelTimer()
         }
         
+        NotificationCenter.default.addObserver(
+            forName: .setAppearanceMode,
+            object: nil,
+            queue: .main
+        ) { notification in
+            if let mode = notification.userInfo?["mode"] as? String {
+                switch mode {
+                case "light":
+                    appearanceManager.currentMode = .light
+                case "dark":
+                    appearanceManager.currentMode = .dark
+                case "system":
+                    appearanceManager.currentMode = .system
+                default:
+                    break
+                }
+            }
+        }
+        
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            menuBarManager.updateMenu(sleepManager: sleepManager)
+            menuBarManager.updateMenu(sleepManager: sleepManager, appearanceManager: appearanceManager)
         }
     }
 }

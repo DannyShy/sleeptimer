@@ -13,6 +13,8 @@
 xcuserdata/
 *.xcuserstate
 DerivedData/
+build/
+**/build/
 *.moved-aside
 *.hmap
 *.ipa

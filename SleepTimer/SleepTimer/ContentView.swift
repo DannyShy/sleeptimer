@@ -3,8 +3,6 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var sleepManager: SleepManager
     @EnvironmentObject var appearanceManager: AppearanceManager
-    @Environment(\.colorScheme) var colorScheme
-    @State private var showSettings = false
     
     let timeOptions: [(label: String, duration: TimeInterval)] = [
         ("30 min", 1800),
@@ -14,25 +12,17 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            VisualEffectView(material: .underWindowBackground, blendingMode: .behindWindow)
-                .ignoresSafeArea()
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(hex: "1a1b30"),
+                    Color(hex: "192038")
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
             VStack(spacing: 30) {
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        showSettings = true
-                    }) {
-                        Image(systemName: "gearshape.fill")
-                            .font(.title2)
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.trailing, 20)
-                    .padding(.top, 20)
-                    .accessibilityLabel("Settings")
-                }
-                
                 VStack(spacing: 8) {
                     Image(systemName: "moon.zzz.fill")
                         .font(.system(size: 60))
@@ -42,7 +32,7 @@ struct ContentView: View {
                     Text("Sleep Timer")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundStyle(.primary)
+                        .foregroundColor(.white)
                 }
                 .padding(.top, 20)
                 
@@ -50,12 +40,13 @@ struct ContentView: View {
                     VStack(spacing: 20) {
                         Text("Mac will sleep in")
                             .font(.title3)
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(Color.white.opacity(0.7))
                         
                         Text(sleepManager.formattedTime())
-                            .font(.system(size: 120, weight: .bold, design: .rounded))
+                            .font(.system(size: 80, weight: .bold, design: .rounded))
                             .foregroundStyle(.tint)
                             .monospacedDigit()
+                            .frame(width: 200)
                             .minimumScaleFactor(0.5)
                             .accessibilityLabel("Time remaining")
                             .accessibilityValue(sleepManager.timerStatusMessage)
@@ -66,10 +57,12 @@ struct ContentView: View {
                             Text("Cancel")
                                 .font(.title3)
                                 .fontWeight(.semibold)
-                                .frame(width: 200, height: 50)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
                         }
+                        .frame(width: 200, height: 50)
                         .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
+                        .buttonBorderShape(.capsule)
                         .keyboardShortcut(.cancelAction)
                         .accessibilityLabel("Cancel timer")
                         .accessibilityHint("Stops the sleep timer")
@@ -79,7 +72,7 @@ struct ContentView: View {
                     VStack(spacing: 16) {
                         Text("Choose sleep timer")
                             .font(.title3)
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(Color.white.opacity(0.7))
                             .padding(.bottom, 10)
                         
                         ForEach(timeOptions, id: \.label) { option in
@@ -93,10 +86,12 @@ struct ContentView: View {
                                         .font(.title2)
                                         .fontWeight(.semibold)
                                 }
-                                .frame(width: 250, height: 60)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
                             }
-                            .buttonStyle(.bordered)
-                            .controlSize(.large)
+                            .frame(width: 200, height: 50)
+                            .buttonStyle(TimerButtonStyle())
+                            .foregroundColor(.white)
                             .accessibilityLabel("Set timer for \(option.label)")
                             .accessibilityHint("Starts a sleep timer")
                         }
@@ -108,38 +103,8 @@ struct ContentView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(width: 400, height: 500)
+        .frame(width: 300, height: 400)
         .tint(Color(hex: "e94560"))
-        .sheet(isPresented: $showSettings) {
-            SettingsView()
-                .environmentObject(appearanceManager)
-        }
-    }
-}
-
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3:
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6:
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8:
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 0, 0)
-        }
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue: Double(b) / 255,
-            opacity: Double(a) / 255
-        )
     }
 }
 
