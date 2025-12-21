@@ -1,11 +1,13 @@
 import Foundation
 import IOKit
 import IOKit.pwr_mgt
+import SwiftUI
 
 class SleepManager: ObservableObject {
     @Published var isTimerActive = false
     @Published var remainingTime: TimeInterval = 0
     @Published var selectedDuration: TimeInterval = 1800
+    @Published var timerStatusMessage: String = ""
     
     private var timer: Timer?
     private var endTime: Date?
@@ -15,6 +17,9 @@ class SleepManager: ObservableObject {
         remainingTime = duration
         endTime = Date().addingTimeInterval(duration)
         isTimerActive = true
+        
+        let minutes = Int(duration) / 60
+        timerStatusMessage = "Timer started for \(minutes) minutes"
         
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.updateTimer()
@@ -27,6 +32,7 @@ class SleepManager: ObservableObject {
         isTimerActive = false
         remainingTime = 0
         endTime = nil
+        timerStatusMessage = "Timer cancelled"
     }
     
     private func updateTimer() {
@@ -36,21 +42,30 @@ class SleepManager: ObservableObject {
         remainingTime = endTime.timeIntervalSince(now)
         
         if remainingTime <= 0 {
+            timerStatusMessage = "Timer complete, putting Mac to sleep"
             cancelTimer()
             putMacToSleep()
+        } else {
+            timerStatusMessage = "Time remaining: \(formattedTime())"
         }
     }
     
     private func putMacToSleep() {
-        let task = Process()
-        task.launchPath = "/usr/bin/pmset"
-        task.arguments = ["sleepnow"]
+        let script = """
+        tell application "System Events"
+            sleep
+        end tell
+        """
         
-        do {
-            try task.run()
-            print("Sleep command executed successfully")
-        } catch {
-            print("Error putting Mac to sleep: \(error)")
+        if let appleScript = NSAppleScript(source: script) {
+            var error: NSDictionary?
+            appleScript.executeAndReturnError(&error)
+            
+            if let error = error {
+                print("Error putting Mac to sleep: \(error)")
+            } else {
+                print("Sleep command executed successfully")
+            }
         }
     }
     

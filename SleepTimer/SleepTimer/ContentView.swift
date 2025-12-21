@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var sleepManager = SleepManager()
+    @EnvironmentObject var sleepManager: SleepManager
     
     let timeOptions: [(label: String, duration: TimeInterval)] = [
         ("30 min", 1800),
@@ -25,7 +25,8 @@ struct ContentView: View {
                         .foregroundColor(Color(hex: "e94560"))
                     
                     Text("Sleep Timer")
-                        .font(.system(size: 32, weight: .bold))
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
                         .foregroundColor(.white)
                 }
                 .padding(.top, 40)
@@ -33,32 +34,38 @@ struct ContentView: View {
                 if sleepManager.isTimerActive {
                     VStack(spacing: 20) {
                         Text("Mac will sleep in")
-                            .font(.system(size: 18))
+                            .font(.title3)
                             .foregroundColor(.white.opacity(0.7))
                         
                         Text(sleepManager.formattedTime())
-                            .font(.system(size: 72, weight: .bold, design: .rounded))
+                            .font(.system(.largeTitle, design: .rounded))
+                            .fontWeight(.bold)
                             .foregroundColor(Color(hex: "e94560"))
                             .monospacedDigit()
+                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+                            .accessibilityLabel("Time remaining")
+                            .accessibilityValue(sleepManager.timerStatusMessage)
                         
                         Button(action: {
                             sleepManager.cancelTimer()
                         }) {
                             Text("Cancel")
-                                .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(width: 200, height: 50)
-                            .background(Color(hex: "e94560"))
-                            .cornerRadius(25)
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .frame(width: 200, height: 50)
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .shadow(color: Color(hex: "e94560").opacity(0.3), radius: 10, x: 0, y: 5)
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color(hex: "e94560"))
+                        .controlSize(.large)
+                        .keyboardShortcut(.cancelAction)
+                        .accessibilityLabel("Cancel timer")
+                        .accessibilityHint("Stops the sleep timer")
                     }
                     .padding(.vertical, 20)
                 } else {
                     VStack(spacing: 16) {
                         Text("Choose sleep timer")
-                            .font(.system(size: 18))
+                            .font(.title3)
                             .foregroundColor(.white.opacity(0.7))
                             .padding(.bottom, 10)
                         
@@ -68,23 +75,18 @@ struct ContentView: View {
                             }) {
                                 HStack {
                                     Image(systemName: "clock.fill")
-                                        .font(.system(size: 20))
+                                        .font(.title2)
                                     Text(option.label)
-                                        .font(.system(size: 20, weight: .semibold))
+                                        .font(.title2)
+                                        .fontWeight(.semibold)
                                 }
-                                .foregroundColor(.white)
                                 .frame(width: 250, height: 60)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 15)
-                                        .fill(Color.white.opacity(0.1))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 15)
-                                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                                        )
-                                )
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 2)
+                            .buttonStyle(.bordered)
+                            .tint(.white.opacity(0.2))
+                            .controlSize(.large)
+                            .accessibilityLabel("Set timer for \(option.label)")
+                            .accessibilityHint("Starts a sleep timer")
                         }
                     }
                     .padding(.vertical, 20)
@@ -126,4 +128,5 @@ extension Color {
 
 #Preview {
     ContentView()
+        .environmentObject(SleepManager())
 }
