@@ -2,6 +2,9 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var sleepManager: SleepManager
+    @EnvironmentObject var appearanceManager: AppearanceManager
+    @Environment(\.colorScheme) var colorScheme
+    @State private var showSettings = false
     
     let timeOptions: [(label: String, duration: TimeInterval)] = [
         ("30 min", 1800),
@@ -11,38 +14,49 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [Color(hex: "1a1a2e"), Color(hex: "16213e")]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            VisualEffectView(material: .underWindowBackground, blendingMode: .behindWindow)
+                .ignoresSafeArea()
             
             VStack(spacing: 30) {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        showSettings = true
+                    }) {
+                        Image(systemName: "gearshape.fill")
+                            .font(.title2)
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.trailing, 20)
+                    .padding(.top, 20)
+                    .accessibilityLabel("Settings")
+                }
+                
                 VStack(spacing: 8) {
                     Image(systemName: "moon.zzz.fill")
                         .font(.system(size: 60))
-                        .foregroundColor(Color(hex: "e94560"))
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.tint)
                     
                     Text("Sleep Timer")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.primary)
                 }
-                .padding(.top, 40)
+                .padding(.top, 20)
                 
                 if sleepManager.isTimerActive {
                     VStack(spacing: 20) {
                         Text("Mac will sleep in")
                             .font(.title3)
-                            .foregroundColor(.white.opacity(0.7))
+                            .foregroundStyle(.secondary)
                         
                         Text(sleepManager.formattedTime())
-                            .font(.system(.largeTitle, design: .rounded))
-                            .fontWeight(.bold)
-                            .foregroundColor(Color(hex: "e94560"))
+                            .font(.system(size: 120, weight: .bold, design: .rounded))
+                            .foregroundStyle(.tint)
                             .monospacedDigit()
-                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+                            .minimumScaleFactor(0.5)
                             .accessibilityLabel("Time remaining")
                             .accessibilityValue(sleepManager.timerStatusMessage)
                         
@@ -55,7 +69,6 @@ struct ContentView: View {
                                 .frame(width: 200, height: 50)
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(Color(hex: "e94560"))
                         .controlSize(.large)
                         .keyboardShortcut(.cancelAction)
                         .accessibilityLabel("Cancel timer")
@@ -66,7 +79,7 @@ struct ContentView: View {
                     VStack(spacing: 16) {
                         Text("Choose sleep timer")
                             .font(.title3)
-                            .foregroundColor(.white.opacity(0.7))
+                            .foregroundStyle(.secondary)
                             .padding(.bottom, 10)
                         
                         ForEach(timeOptions, id: \.label) { option in
@@ -83,7 +96,6 @@ struct ContentView: View {
                                 .frame(width: 250, height: 60)
                             }
                             .buttonStyle(.bordered)
-                            .tint(.white.opacity(0.2))
                             .controlSize(.large)
                             .accessibilityLabel("Set timer for \(option.label)")
                             .accessibilityHint("Starts a sleep timer")
@@ -97,6 +109,11 @@ struct ContentView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(width: 400, height: 500)
+        .tint(Color(hex: "e94560"))
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+                .environmentObject(appearanceManager)
+        }
     }
 }
 
@@ -129,4 +146,5 @@ extension Color {
 #Preview {
     ContentView()
         .environmentObject(SleepManager())
+        .environmentObject(AppearanceManager())
 }

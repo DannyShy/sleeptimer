@@ -5,12 +5,14 @@ struct SleepTimerApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var menuBarManager = MenuBarManager()
     @StateObject private var sleepManager = SleepManager()
+    @StateObject private var appearanceManager = AppearanceManager()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(sleepManager)
                 .environmentObject(menuBarManager)
+                .environmentObject(appearanceManager)
                 .onAppear {
                     setupNotifications()
                 }
@@ -19,6 +21,14 @@ struct SleepTimerApp: App {
         .windowResizability(.contentSize)
         .commands {
             CommandGroup(replacing: .newItem) {}
+            
+            CommandGroup(after: .appSettings) {
+                Button("Appearance...") {
+                    // Settings will be shown via menu bar or window
+                }
+                .keyboardShortcut(",", modifiers: .command)
+            }
+            
             CommandMenu("Timer") {
                 Button("Start 30 min timer") {
                     sleepManager.startTimer(duration: 1800)
