@@ -11,32 +11,24 @@
 		4F2648342EF869A00068BED4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F26482C2EF869A00068BED4 /* Preview Assets.xcassets */; };
 		4F2648362EF869A00068BED4 /* MenuBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F26482B2EF869A00068BED4 /* MenuBarManager.swift */; };
 		4F2648372EF869A00068BED4 /* SleepManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F26482F2EF869A00068BED4 /* SleepManager.swift */; };
-		4F2648382EF869A00068BED4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F26482E2EF869A00068BED4 /* SettingsView.swift */; };
-		4F2648392EF869A00068BED4 /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2648322EF869A00068BED4 /* VisualEffectView.swift */; };
 		4F26483A2EF869A00068BED4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2648262EF869A00068BED4 /* AppDelegate.swift */; };
-		4F26483B2EF869A00068BED4 /* AppearanceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2648272EF869A00068BED4 /* AppearanceManager.swift */; };
 		4F26483C2EF869A00068BED4 /* SleepTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2648312EF869A00068BED4 /* SleepTimerApp.swift */; };
 		4F26483D2EF869A00068BED4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2648292EF869A00068BED4 /* ContentView.swift */; };
 		4F2648402EF869A00068BED4 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2648412EF869A00068BED4 /* ColorExtension.swift */; };
-		4F2648422EF869A00068BED4 /* MacOSButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2648432EF869A00068BED4 /* MacOSButton.swift */; };
 		4F2648442EF869A00068BED4 /* TimerButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2648452EF869A00068BED4 /* TimerButtonStyle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		4F2648262EF869A00068BED4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = SleepTimer/AppDelegate.swift; sourceTree = "<group>"; };
-		4F2648272EF869A00068BED4 /* AppearanceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppearanceManager.swift; path = SleepTimer/AppearanceManager.swift; sourceTree = "<group>"; };
 		4F2648282EF869A00068BED4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = SleepTimer/Assets.xcassets; sourceTree = "<group>"; };
 		4F2648292EF869A00068BED4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = SleepTimer/ContentView.swift; sourceTree = "<group>"; };
 		4F26482A2EF869A00068BED4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = SleepTimer/Info.plist; sourceTree = "<group>"; };
 		4F26482B2EF869A00068BED4 /* MenuBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MenuBarManager.swift; path = SleepTimer/MenuBarManager.swift; sourceTree = "<group>"; };
 		4F26482C2EF869A00068BED4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		4F26482E2EF869A00068BED4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsView.swift; path = SleepTimer/SettingsView.swift; sourceTree = "<group>"; };
 		4F26482F2EF869A00068BED4 /* SleepManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepManager.swift; path = SleepTimer/SleepManager.swift; sourceTree = "<group>"; };
 		4F2648302EF869A00068BED4 /* SleepTimer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SleepTimer.entitlements; path = SleepTimer/SleepTimer.entitlements; sourceTree = "<group>"; };
 		4F2648312EF869A00068BED4 /* SleepTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepTimerApp.swift; path = SleepTimer/SleepTimerApp.swift; sourceTree = "<group>"; };
-		4F2648322EF869A00068BED4 /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VisualEffectView.swift; path = SleepTimer/VisualEffectView.swift; sourceTree = "<group>"; };
 		4F2648412EF869A00068BED4 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ColorExtension.swift; path = SleepTimer/ColorExtension.swift; sourceTree = "<group>"; };
-		4F2648432EF869A00068BED4 /* MacOSButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacOSButton.swift; path = SleepTimer/MacOSButton.swift; sourceTree = "<group>"; };
 		4F2648452EF869A00068BED4 /* TimerButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimerButtonStyle.swift; path = SleepTimer/TimerButtonStyle.swift; sourceTree = "<group>"; };
 		A1000011000000000000001 /* SleepTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SleepTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -65,20 +57,16 @@
 			isa = PBXGroup;
 			children = (
 				4F2648262EF869A00068BED4 /* AppDelegate.swift */,
-				4F2648272EF869A00068BED4 /* AppearanceManager.swift */,
 				4F2648282EF869A00068BED4 /* Assets.xcassets */,
 				4F2648412EF869A00068BED4 /* ColorExtension.swift */,
 				4F2648292EF869A00068BED4 /* ContentView.swift */,
 				4F26482A2EF869A00068BED4 /* Info.plist */,
-				4F2648432EF869A00068BED4 /* MacOSButton.swift */,
 				4F26482B2EF869A00068BED4 /* MenuBarManager.swift */,
 				4F2648452EF869A00068BED4 /* TimerButtonStyle.swift */,
 				4F26482D2EF869A00068BED4 /* Preview Content */,
-				4F26482E2EF869A00068BED4 /* SettingsView.swift */,
 				4F26482F2EF869A00068BED4 /* SleepManager.swift */,
 				4F2648302EF869A00068BED4 /* SleepTimer.entitlements */,
 				4F2648312EF869A00068BED4 /* SleepTimerApp.swift */,
-				4F2648322EF869A00068BED4 /* VisualEffectView.swift */,
 				A1000016000000000000001 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -162,13 +150,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4F2648422EF869A00068BED4 /* MacOSButton.swift in Sources */,
 				4F2648362EF869A00068BED4 /* MenuBarManager.swift in Sources */,
 				4F2648442EF869A00068BED4 /* TimerButtonStyle.swift in Sources */,
-				4F2648382EF869A00068BED4 /* SettingsView.swift in Sources */,
-				4F2648392EF869A00068BED4 /* VisualEffectView.swift in Sources */,
 				4F26483A2EF869A00068BED4 /* AppDelegate.swift in Sources */,
-				4F26483B2EF869A00068BED4 /* AppearanceManager.swift in Sources */,
 				4F26483C2EF869A00068BED4 /* SleepTimerApp.swift in Sources */,
 				4F26483D2EF869A00068BED4 /* ContentView.swift in Sources */,
 				4F2648402EF869A00068BED4 /* ColorExtension.swift in Sources */,

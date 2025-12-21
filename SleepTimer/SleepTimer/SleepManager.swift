@@ -1,6 +1,4 @@
 import Foundation
-import IOKit
-import IOKit.pwr_mgt
 import SwiftUI
 
 class SleepManager: ObservableObject {

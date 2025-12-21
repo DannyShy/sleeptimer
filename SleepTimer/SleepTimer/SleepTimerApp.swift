@@ -5,14 +5,12 @@ struct SleepTimerApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var menuBarManager = MenuBarManager()
     @StateObject private var sleepManager = SleepManager()
-    @StateObject private var appearanceManager = AppearanceManager()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(sleepManager)
                 .environmentObject(menuBarManager)
-                .environmentObject(appearanceManager)
                 .onAppear {
                     setupNotifications()
                 }
@@ -21,27 +19,6 @@ struct SleepTimerApp: App {
         .windowResizability(.contentSize)
         .commands {
             CommandGroup(replacing: .newItem) {}
-            
-            CommandGroup(after: .appInfo) {
-                Menu("Appearance") {
-                    Button("Light") {
-                        appearanceManager.currentMode = .light
-                    }
-                    .keyboardShortcut("l", modifiers: [.command, .option])
-                    
-                    Button("Dark") {
-                        appearanceManager.currentMode = .dark
-                    }
-                    .keyboardShortcut("d", modifiers: [.command, .option])
-                    
-                    Button("System") {
-                        appearanceManager.currentMode = .system
-                    }
-                    .keyboardShortcut("s", modifiers: [.command, .option])
-                }
-                
-                Divider()
-            }
             
             CommandMenu("Timer") {
                 Button("Start 30 min timer") {
@@ -89,27 +66,8 @@ struct SleepTimerApp: App {
             sleepManager.cancelTimer()
         }
         
-        NotificationCenter.default.addObserver(
-            forName: .setAppearanceMode,
-            object: nil,
-            queue: .main
-        ) { notification in
-            if let mode = notification.userInfo?["mode"] as? String {
-                switch mode {
-                case "light":
-                    appearanceManager.currentMode = .light
-                case "dark":
-                    appearanceManager.currentMode = .dark
-                case "system":
-                    appearanceManager.currentMode = .system
-                default:
-                    break
-                }
-            }
-        }
-        
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            menuBarManager.updateMenu(sleepManager: sleepManager, appearanceManager: appearanceManager)
+            menuBarManager.updateMenu(sleepManager: sleepManager)
         }
     }
 }

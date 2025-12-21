@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var sleepManager: SleepManager
-    @EnvironmentObject var appearanceManager: AppearanceManager
     
     let timeOptions: [(label: String, duration: TimeInterval)] = [
         ("30 min", 1800),
@@ -28,11 +27,13 @@ struct ContentView: View {
                         .font(.system(size: 60))
                         .symbolRenderingMode(.hierarchical)
                         .foregroundStyle(.tint)
+                        .accessibilityHidden(true)
                     
                     Text("Sleep Timer")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
+                        .accessibilityAddTraits(.isHeader)
                 }
                 .padding(.top, 20)
                 
@@ -111,5 +112,4 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(SleepManager())
-        .environmentObject(AppearanceManager())
 }

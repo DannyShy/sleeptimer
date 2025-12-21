@@ -22,7 +22,7 @@ class MenuBarManager: NSObject, ObservableObject {
         updateMenu()
     }
     
-    func updateMenu(sleepManager: SleepManager? = nil, appearanceManager: AppearanceManager? = nil) {
+    func updateMenu(sleepManager: SleepManager? = nil) {
         let menu = NSMenu()
         
         if let manager = sleepManager, manager.isTimerActive {
@@ -48,25 +48,6 @@ class MenuBarManager: NSObject, ObservableObject {
             item60.target = self
             menu.addItem(item60)
         }
-        
-        menu.addItem(NSMenuItem.separator())
-        
-        let appearanceMenu = NSMenu()
-        let lightItem = NSMenuItem(title: "Light", action: #selector(setLightMode), keyEquivalent: "")
-        lightItem.target = self
-        appearanceMenu.addItem(lightItem)
-        
-        let darkItem = NSMenuItem(title: "Dark", action: #selector(setDarkMode), keyEquivalent: "")
-        darkItem.target = self
-        appearanceMenu.addItem(darkItem)
-        
-        let systemItem = NSMenuItem(title: "System", action: #selector(setSystemMode), keyEquivalent: "")
-        systemItem.target = self
-        appearanceMenu.addItem(systemItem)
-        
-        let appearanceMenuItem = NSMenuItem(title: "Appearance", action: nil, keyEquivalent: "")
-        appearanceMenuItem.submenu = appearanceMenu
-        menu.addItem(appearanceMenuItem)
         
         menu.addItem(NSMenuItem.separator())
         
@@ -109,18 +90,6 @@ class MenuBarManager: NSObject, ObservableObject {
         NotificationCenter.default.post(name: .cancelTimer, object: nil)
     }
     
-    @objc private func setLightMode() {
-        NotificationCenter.default.post(name: .setAppearanceMode, object: nil, userInfo: ["mode": "light"])
-    }
-    
-    @objc private func setDarkMode() {
-        NotificationCenter.default.post(name: .setAppearanceMode, object: nil, userInfo: ["mode": "dark"])
-    }
-    
-    @objc private func setSystemMode() {
-        NotificationCenter.default.post(name: .setAppearanceMode, object: nil, userInfo: ["mode": "system"])
-    }
-    
     @objc private func quitApp() {
         NSApplication.shared.terminate(nil)
     }
@@ -129,5 +98,4 @@ class MenuBarManager: NSObject, ObservableObject {
 extension Notification.Name {
     static let startTimer = Notification.Name("startTimer")
     static let cancelTimer = Notification.Name("cancelTimer")
-    static let setAppearanceMode = Notification.Name("setAppearanceMode")
 }
