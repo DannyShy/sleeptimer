@@ -5,6 +5,7 @@ struct SleepTimerApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var menuBarManager = MenuBarManager()
     @StateObject private var sleepManager = SleepManager()
+    @StateObject private var warningWindowManager = WarningWindowManager()
     
     var body: some Scene {
         WindowGroup {
@@ -12,6 +13,7 @@ struct SleepTimerApp: App {
                 .environmentObject(sleepManager)
                 .environmentObject(menuBarManager)
                 .onAppear {
+                    sleepManager.warningWindowManager = warningWindowManager
                     setupNotifications()
                 }
         }

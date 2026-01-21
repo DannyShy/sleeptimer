@@ -6,9 +6,12 @@ class SleepManager: ObservableObject {
     @Published var remainingTime: TimeInterval = 0
     @Published var selectedDuration: TimeInterval = 1800
     @Published var timerStatusMessage: String = ""
+    @Published var showWarningDialog = false
     
     private var timer: Timer?
     private var endTime: Date?
+    private var warningShown = false
+    var warningWindowManager: WarningWindowManager?
     
     func startTimer(duration: TimeInterval) {
         selectedDuration = duration
@@ -30,6 +33,9 @@ class SleepManager: ObservableObject {
         isTimerActive = false
         remainingTime = 0
         endTime = nil
+        showWarningDialog = false
+        warningShown = false
+        warningWindowManager?.hideWarningDialog()
         timerStatusMessage = "Timer cancelled"
     }
     
@@ -41,8 +47,15 @@ class SleepManager: ObservableObject {
         
         if remainingTime <= 0 {
             timerStatusMessage = "Timer complete, putting Mac to sleep"
+            showWarningDialog = false
+            warningWindowManager?.hideWarningDialog()
             cancelTimer()
             putMacToSleep()
+        } else if remainingTime <= 60 && !warningShown {
+            showWarningDialog = true
+            warningShown = true
+            warningWindowManager?.showWarningDialog(sleepManager: self)
+            timerStatusMessage = "Warning: Mac will sleep in 1 minute"
         } else {
             timerStatusMessage = "Time remaining: \(formattedTime())"
         }

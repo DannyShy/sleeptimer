@@ -1,0 +1,13 @@
+name: SleepTimer
+options:
+  bundleIdPrefix: com.sklad.projekty
+targets:
+  SleepTimer:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: SleepTimer
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
