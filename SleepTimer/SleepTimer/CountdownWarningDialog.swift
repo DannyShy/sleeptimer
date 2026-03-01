@@ -2,83 +2,92 @@ import SwiftUI
 
 struct CountdownWarningDialog: View {
     @EnvironmentObject var sleepManager: SleepManager
-    
+
+    private var countdown: String {
+        let t = max(0, Int(sleepManager.remainingTime))
+        let m = t / 60, s = t % 60
+        return String(format: "%02d:%02d", m, s)
+    }
+
     var body: some View {
         ZStack {
-            Color.black.opacity(0.4)
+            // ── Full-screen dark backdrop ─────────────────────────
+            Color.black.opacity(0.70)
                 .ignoresSafeArea()
-            
-            VStack(spacing: 24) {
-            VStack(spacing: 12) {
+
+            // ── Card ─────────────────────────────────────────────────
+            VStack(spacing: 28) {
+
+                // Icon
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.system(size: 50))
+                    .font(.system(size: 56))
                     .foregroundStyle(.yellow)
-                    .symbolRenderingMode(.hierarchical)
-                
-                Text("Warning")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                
-                Text("Mac will sleep in")
-                    .font(.headline)
-                    .foregroundColor(Color.white.opacity(0.8))
-            }
-            
-            Text(sleepManager.formattedTime())
-                .font(.system(size: 60, weight: .bold, design: .rounded))
-                .foregroundStyle(Color(hex: "e94560"))
-                .monospacedDigit()
-                .frame(minWidth: 150)
-            
-            VStack(spacing: 12) {
-                Button(action: {
-                    sleepManager.cancelTimer()
-                }) {
-                    Text("Cancel Timer")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .frame(width: 200, height: 50)
-                        .background(Color(hex: "e94560"))
-                        .clipShape(Capsule())
-                }
-                .buttonStyle(.plain)
-                .keyboardShortcut(.cancelAction)
-                
-                Button(action: {
-                    sleepManager.showWarningDialog = false
-                    sleepManager.warningWindowManager?.hideWarningDialog()
-                }) {
-                    Text("Continue")
+                    .symbolRenderingMode(.multicolor)
+                    .padding(.top, 8)
+
+                // Text block
+                VStack(spacing: 6) {
+                    Text("Mac sa o chvíľu uspí")
+                        .font(.title2.weight(.bold))
+                        .foregroundStyle(.primary)
+
+                    Text("Zostávajúci čas do uspatia:")
                         .font(.subheadline)
-                        .foregroundColor(Color.white.opacity(0.7))
+                        .foregroundStyle(.secondary)
                 }
-                .buttonStyle(.plain)
+
+                // Countdown digits
+                Text(countdown)
+                    .font(.system(size: 72, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(.primary)
+                    .frame(minWidth: 200)
+
+                // Buttons
+                VStack(spacing: 12) {
+                    // Cancel — system blue
+                    Button {
+                        sleepManager.cancelTimer()
+                    } label: {
+                        Text("Zrušiť časovač")
+                            .font(.headline.weight(.semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Capsule().fill(Color.accentColor))
+                    }
+                    .buttonStyle(.plain)
+                    .keyboardShortcut(.cancelAction)
+
+                    // Snooze — translucent
+                    Button {
+                        sleepManager.snoozeTimer()
+                    } label: {
+                        Text("Odložiť o 5 minút")
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(.primary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(
+                                Capsule()
+                                    .fill(Color.primary.opacity(0.08))
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
             }
+            .padding(32)
+            .frame(width: 340)
+            .background(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(.ultraThinMaterial)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .strokeBorder(Color.white.opacity(0.2), lineWidth: 0.5)
+            )
+            .shadow(color: .black.opacity(0.25), radius: 30, x: 0, y: 15)
         }
-        .padding(32)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color(hex: "1a1b30"),
-                            Color(hex: "192038")
-                        ]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-        )
-        .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
-        .frame(width: 350)
-        }
-        .tint(Color(hex: "e94560"))
     }
 }
 

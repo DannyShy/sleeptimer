@@ -27,6 +27,18 @@ class SleepManager: ObservableObject {
         }
     }
     
+    func snoozeTimer() {
+        guard isTimerActive, let end = endTime else { return }
+        let newEnd = end.addingTimeInterval(300)
+        endTime = newEnd
+        selectedDuration += 300
+        remainingTime = newEnd.timeIntervalSince(Date())
+        showWarningDialog = false
+        warningShown = false
+        warningWindowManager?.hideWarningDialog()
+        timerStatusMessage = "Timer snoozed by 5 minutes"
+    }
+
     func cancelTimer() {
         timer?.invalidate()
         timer = nil
@@ -80,6 +92,18 @@ class SleepManager: ObservableObject {
         }
     }
     
+    var progress: Double {
+        guard isTimerActive, selectedDuration > 0 else { return 0 }
+        return 1.0 - (remainingTime / selectedDuration)
+    }
+
+    var sleepAtTime: String {
+        guard let endTime = endTime else { return "" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: endTime)
+    }
+
     func formattedTime() -> String {
         let minutes = Int(remainingTime) / 60
         let seconds = Int(remainingTime) % 60
