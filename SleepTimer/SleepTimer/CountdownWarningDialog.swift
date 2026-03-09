@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CountdownWarningDialog: View {
     @EnvironmentObject var sleepManager: SleepManager
+    @ObservedObject private var settings = SettingsManager.shared
 
     private var countdown: String {
         let t = max(0, Int(sleepManager.remainingTime))
@@ -27,11 +28,11 @@ struct CountdownWarningDialog: View {
 
                 // Text block
                 VStack(spacing: 6) {
-                    Text("Mac sa o chvíľu uspí")
+                    Text(L("Mac will sleep soon"))
                         .font(.title2.weight(.bold))
                         .foregroundStyle(.primary)
 
-                    Text("Zostávajúci čas do uspatia:")
+                    Text(L("Time remaining until sleep:"))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -49,7 +50,7 @@ struct CountdownWarningDialog: View {
                     Button {
                         sleepManager.cancelTimer()
                     } label: {
-                        Text("Zrušiť časovač")
+                        Text(L("Cancel Timer"))
                             .font(.headline.weight(.semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -63,7 +64,7 @@ struct CountdownWarningDialog: View {
                     Button {
                         sleepManager.snoozeTimer()
                     } label: {
-                        Text("Odložiť o 5 minút")
+                        Text(L("Snooze 5 minutes"))
                             .font(.headline.weight(.semibold))
                             .foregroundStyle(.primary)
                             .frame(maxWidth: .infinity)

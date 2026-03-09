@@ -21,6 +21,8 @@ class SleepManager: ObservableObject {
         
         let minutes = Int(duration) / 60
         timerStatusMessage = "Timer started for \(minutes) minutes"
+        SettingsManager.shared.saveLastUsedDuration(duration)
+        SettingsManager.shared.log("Timer started: \(minutes) min")
         
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.updateTimer()
@@ -37,6 +39,7 @@ class SleepManager: ObservableObject {
         warningShown = false
         warningWindowManager?.hideWarningDialog()
         timerStatusMessage = "Timer snoozed by 5 minutes"
+        SettingsManager.shared.log("Timer snoozed +5 min")
     }
 
     func cancelTimer() {
@@ -49,6 +52,7 @@ class SleepManager: ObservableObject {
         warningShown = false
         warningWindowManager?.hideWarningDialog()
         timerStatusMessage = "Timer cancelled"
+        SettingsManager.shared.log("Timer cancelled")
     }
     
     private func updateTimer() {
@@ -67,6 +71,9 @@ class SleepManager: ObservableObject {
             showWarningDialog = true
             warningShown = true
             warningWindowManager?.showWarningDialog(sleepManager: self)
+            if UserDefaults.standard.bool(forKey: "warningSoundEnabled") {
+                SettingsManager.shared.playWarningSound()
+            }
             timerStatusMessage = "Warning: Mac will sleep in 1 minute"
         } else {
             timerStatusMessage = "Time remaining: \(formattedTime())"

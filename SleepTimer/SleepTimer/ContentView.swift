@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var sleepManager: SleepManager
+    @ObservedObject private var settings = SettingsManager.shared
     var onOpenSettings: () -> Void = {}
 
     // MARK: - Timer option
@@ -25,6 +26,7 @@ struct ContentView: View {
     // MARK: - State
 
     @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("defaultDuration") private var defaultDuration = "30 min"
     @State private var selectedOption: TimerOption = .thirtyMin
     @State private var customHours: Int = 0
     @State private var customMinutes: Int = 30
@@ -75,15 +77,15 @@ struct ContentView: View {
 
             // ── Header ───────────────────────────────────────────────
             HStack {
-                Text("Sleep Timer")
+                Text(L("Sleep Timer"))
                     .font(.title3.weight(.bold))
                 Spacer()
                 Menu {
-                    Button("Check for Updates...") { print("Check for updates") }
-                    Button("Send Feedback...")     { print("Send feedback") }
-                    Button("Settings...")           { onOpenSettings() }
+                    Button(L("Check for Updates...")) { print("Check for updates") }
+                    Button(L("Send Feedback..."))     { print("Send feedback") }
+                    Button(L("Settings..."))           { onOpenSettings() }
                     Divider()
-                    Button("Quit Sleep Timer")     { NSApplication.shared.terminate(nil) }
+                    Button(L("Quit Sleep Timer"))     { NSApplication.shared.terminate(nil) }
                 } label: {
                     Image(systemName: "gearshape")
                         .font(.system(size: 16, weight: .semibold))
@@ -96,10 +98,11 @@ struct ContentView: View {
 
             // ── Segmented Picker ─────────────────────────────────────
             Picker("", selection: $selectedOption) {
-                ForEach(TimerOption.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                ForEach(TimerOption.allCases, id: \.self) { Text(L($0.rawValue)).tag($0) }
             }
             .pickerStyle(.segmented)
             .disabled(sleepManager.isTimerActive)
+            .id(settings.appLanguage)
 
             // ── Center block ─────────────────────────────────────────
             if showCustomInput {
@@ -115,7 +118,7 @@ struct ContentView: View {
                     .minimumScaleFactor(0.7)
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 12)
-                    .accessibilityLabel("Time remaining")
+                    .accessibilityLabel(L("Time remaining"))
                     .transition(.opacity)
             }
 
@@ -134,7 +137,7 @@ struct ContentView: View {
             }
 
             // ── Sleep-at footer ──────────────────────────────────────
-            Text("Mac will sleep at **\(sleepManager.isTimerActive ? sleepManager.sleepAtTime : sleepAtPreview)**")
+            Text("\(L("Mac will sleep at")) **\(sleepManager.isTimerActive ? sleepManager.sleepAtTime : sleepAtPreview)**")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity)
@@ -144,7 +147,7 @@ struct ContentView: View {
                 if sleepManager.isTimerActive { sleepManager.cancelTimer() }
                 else { sleepManager.startTimer(duration: currentDuration) }
             } label: {
-                Text(sleepManager.isTimerActive ? "Cancel" : "Start Timer")
+                Text(sleepManager.isTimerActive ? L("Cancel") : L("Start Timer"))
                     .font(.headline.weight(.semibold))
                     .foregroundColor(sleepManager.isTimerActive ? .primary : .white)
                     .frame(maxWidth: .infinity)
@@ -170,7 +173,38 @@ struct ContentView: View {
             RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(Color.white.opacity(0.15), lineWidth: 0.5)
         )
+        .preferredColorScheme(settings.colorScheme)
         .animation(.easeInOut(duration: 0.2), value: showCustomInput)
+        .onAppear { if !sleepManager.isTimerActive { applyDefaultDuration() } }
+        .onChange(of: sleepManager.isTimerActive) { _, active in
+            if !active { applyDefaultDuration() }
+        }
+    }
+
+    // MARK: - Default duration sync
+
+    private func applyDefaultDuration() {
+        let seconds: TimeInterval
+        switch defaultDuration {
+        case "30 min": seconds = 1800
+        case "45 min": seconds = 2700
+        case "1h":     seconds = 3600
+        case "Last used":
+            let last = UserDefaults.standard.double(forKey: "lastUsedDuration")
+            seconds = last > 0 ? last : 1800
+        default: seconds = 1800
+        }
+
+        // Map seconds to the matching segment (or Custom)
+        switch seconds {
+        case 1800: selectedOption = .thirtyMin
+        case 2700: selectedOption = .fortyFiveMin
+        case 3600: selectedOption = .oneHour
+        default:
+            selectedOption = .custom
+            customHours   = Int(seconds) / 3600
+            customMinutes = (Int(seconds) % 3600) / 60
+        }
     }
 
     // MARK: - Custom input block
@@ -178,12 +212,12 @@ struct ContentView: View {
     private var customInputBlock: some View {
         HStack(spacing: 10) {
             Spacer()
-            TimeInputBox(value: $customHours, range: 0...99, label: "HOURS")
+            TimeInputBox(value: $customHours, range: 0...99, label: L("HOURS"))
             Text(":")
                 .font(.system(size: 48, weight: .bold, design: .rounded))
                 .foregroundStyle(.primary)
                 .offset(y: -10)
-            TimeInputBox(value: $customMinutes, range: 0...99, label: "MINUTES")
+            TimeInputBox(value: $customMinutes, range: 0...99, label: L("MINUTES"))
             Spacer()
         }
     }

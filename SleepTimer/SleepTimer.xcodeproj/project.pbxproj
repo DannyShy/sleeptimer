@@ -12,10 +12,12 @@
 		289F5BCFE075B6A3F61E9BFF /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2219BEEA7EB887F88DCCB963 /* VisualEffectView.swift */; };
 		348F2B9D09A1BDE984A81475 /* CountdownWarningDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BFC38AAB4F029EEB28C08F /* CountdownWarningDialog.swift */; };
 		3F520A47EF97805256CE39CB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A349BAD9F2A788F44F759AE /* Preview Assets.xcassets */; };
+		43D808C94154BC1B6DBC1D1B /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C388BE85775F4FF10422BF42 /* SettingsManager.swift */; };
 		69C14C7F23790D6DBB696A7F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C30E20B448B595F84356C08 /* ContentView.swift */; };
 		894FB2C9FF751B2E16D3944F /* SleepTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A269E96EFD25551A944E70 /* SleepTimerApp.swift */; };
 		98F8AE5376130C76EE342D80 /* MenuBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABA2650E994F648377B50C61 /* MenuBarManager.swift */; };
 		99A344E330A8E3FFF8917B41 /* FloatingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E10425CC40ED926E13F9A4A /* FloatingWindow.swift */; };
+		B05E9BEFDA6249C0B66A40F0 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE65FD8461D4EC30D6B713 /* Localization.swift */; };
 		B4A35D1BDC2A324C9862DB0E /* SettingsToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A732C46CBA1CD65D2877162 /* SettingsToolbar.swift */; };
 		B5B3241085947E7315CC31BB /* TimerButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5329D8B25C79178B44313DD7 /* TimerButtonStyle.swift */; };
 		BF755A3C3746E5C6AED57E12 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B327B40CA474DE2B6DBD50E8 /* SettingsView.swift */; };
@@ -34,11 +36,13 @@
 		5A732C46CBA1CD65D2877162 /* SettingsToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsToolbar.swift; sourceTree = "<group>"; };
 		685DE5D924C9D24186AB9F69 /* SleepManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepManager.swift; sourceTree = "<group>"; };
 		6B8ACC872315C84BAFBB5F66 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		6FEE65FD8461D4EC30D6B713 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		7A349BAD9F2A788F44F759AE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9CB1C5A0E535DF0C91E44B44 /* WarningWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningWindowManager.swift; sourceTree = "<group>"; };
 		A24C525AE8616B2C879BC905 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		ABA2650E994F648377B50C61 /* MenuBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarManager.swift; sourceTree = "<group>"; };
 		B327B40CA474DE2B6DBD50E8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C388BE85775F4FF10422BF42 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		D19D46FFB58B6A9D8ECE51EA /* SleepTimer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SleepTimer.entitlements; sourceTree = "<group>"; };
 		EBE05F314E3D0B1049188067 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F4C84259F963DAF3D21F9800 /* SleepTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SleepTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -56,7 +60,9 @@
 				53BFC38AAB4F029EEB28C08F /* CountdownWarningDialog.swift */,
 				3E10425CC40ED926E13F9A4A /* FloatingWindow.swift */,
 				F92A7A89637B46B796584694 /* Info.plist */,
+				6FEE65FD8461D4EC30D6B713 /* Localization.swift */,
 				ABA2650E994F648377B50C61 /* MenuBarManager.swift */,
+				C388BE85775F4FF10422BF42 /* SettingsManager.swift */,
 				5A732C46CBA1CD65D2877162 /* SettingsToolbar.swift */,
 				B327B40CA474DE2B6DBD50E8 /* SettingsView.swift */,
 				685DE5D924C9D24186AB9F69 /* SleepManager.swift */,
@@ -165,7 +171,9 @@
 				69C14C7F23790D6DBB696A7F /* ContentView.swift in Sources */,
 				348F2B9D09A1BDE984A81475 /* CountdownWarningDialog.swift in Sources */,
 				99A344E330A8E3FFF8917B41 /* FloatingWindow.swift in Sources */,
+				B05E9BEFDA6249C0B66A40F0 /* Localization.swift in Sources */,
 				98F8AE5376130C76EE342D80 /* MenuBarManager.swift in Sources */,
+				43D808C94154BC1B6DBC1D1B /* SettingsManager.swift in Sources */,
 				B4A35D1BDC2A324C9862DB0E /* SettingsToolbar.swift in Sources */,
 				BF755A3C3746E5C6AED57E12 /* SettingsView.swift in Sources */,
 				2845D6A88CF21AB52CEF7FF5 /* SleepManager.swift in Sources */,
