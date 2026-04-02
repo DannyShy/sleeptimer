@@ -7,7 +7,7 @@ private let strings: [String: [String: String]] = [
     // ── ContentView ─────────────────────────────────────────────
     "Sleep Timer": [
         "sk": "Časovač spánku", "de": "Schlaf-Timer",
-        "fr": "Minuterie de sommeil", "es": "Temporizador de sueño"
+        "fr": "Minuterie de mise en veille", "es": "Temporizador de sueño"
     ],
     "Check for Updates...": [
         "sk": "Skontrolovať aktualizácie…", "de": "Nach Updates suchen…",
@@ -34,7 +34,7 @@ private let strings: [String: [String: String]] = [
     ],
     "Mac will sleep at": [
         "sk": "Mac sa uspí o", "de": "Mac schläft um",
-        "fr": "Le Mac s'endormira à", "es": "El Mac dormirá a las"
+        "fr": "Le Mac entrera en veille à", "es": "El Mac dormirá a las"
     ],
     "Start Timer": [
         "sk": "Spustiť časovač", "de": "Timer starten",
@@ -154,7 +154,7 @@ private let strings: [String: [String: String]] = [
     // ── CountdownWarningDialog ──────────────────────────────────
     "Mac will sleep soon": [
         "sk": "Mac sa o chvíľu uspí", "de": "Mac wird bald schlafen",
-        "fr": "Le Mac va bientôt s'endormir", "es": "El Mac dormirá pronto"
+        "fr": "Le Mac va bientôt entrer en veille", "es": "El Mac dormirá pronto"
     ],
     "Time remaining until sleep:": [
         "sk": "Zostávajúci čas do uspatia:", "de": "Verbleibende Zeit bis zum Ruhezustand:",
