@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 import Combine
 
-class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowDelegate {
 
     private var statusItem: NSStatusItem!
     private var popover: NSPopover!
@@ -117,8 +117,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     // MARK: - Settings window
 
     private func openSettings() {
-        if let window = settingsWindow, window.isVisible {
-            window.orderFrontRegardless()
+        if let window = settingsWindow {
+            window.makeKeyAndOrderFront(nil)
             NSApp.activate(ignoringOtherApps: true)
             return
         }
@@ -158,6 +158,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
             window.contentView?.translatesAutoresizingMaskIntoConstraints = true
             window.contentView?.autoresizesSubviews = false
 
+            window.delegate = self
             window.center()
             window.isReleasedWhenClosed = false
             self.settingsWindow = window
@@ -166,6 +167,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
             window.makeKeyAndOrderFront(nil)
             NSApp.activate(ignoringOtherApps: true)
         }
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        guard let closing = notification.object as? NSWindow,
+              closing === settingsWindow else { return }
+        settingsWindow = nil
+        settingsHostingController = nil
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {

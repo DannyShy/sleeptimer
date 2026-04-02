@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import IOKit.pwr_mgt
 
 class SleepManager: ObservableObject {
     @Published var isTimerActive = false
@@ -14,6 +15,11 @@ class SleepManager: ObservableObject {
     var warningWindowManager: WarningWindowManager?
     
     func startTimer(duration: TimeInterval) {
+        guard duration > 0 else { return }
+        
+        timer?.invalidate()
+        timer = nil
+        
         selectedDuration = duration
         remainingTime = duration
         endTime = Date().addingTimeInterval(duration)
@@ -24,9 +30,11 @@ class SleepManager: ObservableObject {
         SettingsManager.shared.saveLastUsedDuration(duration)
         SettingsManager.shared.log("Timer started: \(minutes) min")
         
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        let t = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.updateTimer()
         }
+        RunLoop.main.add(t, forMode: .common)
+        timer = t
     }
     
     func snoozeTimer() {
@@ -59,7 +67,7 @@ class SleepManager: ObservableObject {
         guard let endTime = endTime else { return }
         
         let now = Date()
-        remainingTime = endTime.timeIntervalSince(now)
+        remainingTime = max(0, endTime.timeIntervalSince(now))
         
         if remainingTime <= 0 {
             timerStatusMessage = "Timer complete, putting Mac to sleep"
@@ -81,21 +89,17 @@ class SleepManager: ObservableObject {
     }
     
     private func putMacToSleep() {
-        let script = """
-        tell application "System Events"
-            sleep
-        end tell
-        """
-        
-        if let appleScript = NSAppleScript(source: script) {
-            var error: NSDictionary?
-            appleScript.executeAndReturnError(&error)
-            
-            if let error = error {
-                print("Error putting Mac to sleep: \(error)")
-            } else {
-                print("Sleep command executed successfully")
-            }
+        let port = IOPMFindPowerManagement(mach_port_t(MACH_PORT_NULL))
+        guard port != 0 else {
+            SettingsManager.shared.log("Error: could not connect to IOKit power management")
+            return
+        }
+        let result = IOPMSleepSystem(port)
+        IOServiceClose(port)
+        if result == kIOReturnSuccess {
+            SettingsManager.shared.log("Sleep command executed successfully")
+        } else {
+            SettingsManager.shared.log("Error putting Mac to sleep: IOKit result \(result)")
         }
     }
     

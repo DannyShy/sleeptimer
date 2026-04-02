@@ -81,9 +81,10 @@ struct ContentView: View {
                     .font(.title3.weight(.bold))
                 Spacer()
                 Menu {
-                    Button(L("Check for Updates...")) { print("Check for updates") }
-                    Button(L("Send Feedback..."))     { print("Send feedback") }
                     Button(L("Settings..."))           { onOpenSettings() }
+                    Divider()
+                    Button(L("Check for Updates..."))  { settings.checkForUpdates() }
+                    Button(L("Send Feedback..."))      { settings.sendFeedback() }
                     Divider()
                     Button(L("Quit Sleep Timer"))     { NSApplication.shared.terminate(nil) }
                 } label: {
@@ -161,6 +162,8 @@ struct ContentView: View {
                     )
             }
             .buttonStyle(.plain)
+            .disabled(!sleepManager.isTimerActive && currentDuration <= 0)
+            .opacity(!sleepManager.isTimerActive && currentDuration <= 0 ? 0.4 : 1)
             .onHover { hov in
                 guard sleepManager.isTimerActive else { return }
                 withAnimation(.easeInOut(duration: 0.15)) { isHoveringCancel = hov }
