@@ -268,13 +268,13 @@ private struct TimeInputBox: View {
                 .tracking(1)
         }
         .onAppear { text = String(format: "%02d", value) }
-        .onChange(of: text, perform: { _ in handleTextChange() })
-        .onChange(of: isFocused, perform: { focused in
+        .onChange(of: text) { handleTextChange() }
+        .onChange(of: isFocused) { _, focused in
             if !focused { formatText() }
-        })
-        .onChange(of: value, perform: { _ in
+        }
+        .onChange(of: value) {
             if !isFocused { text = String(format: "%02d", value) }
-        })
+        }
     }
 
     private func handleTextChange() {
