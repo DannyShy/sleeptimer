@@ -32,7 +32,7 @@ struct SettingsView: View {
                 SettingsTitlebarBackground()
 
                 VStack(spacing: 0) {
-                    Text(L("Sleep Timer Settings"))
+                    Text(L("Doze Settings"))
                         .font(.system(size: 13, weight: .semibold))
                         .frame(maxWidth: .infinity)
                         .frame(height: 28)
@@ -223,7 +223,7 @@ private struct ShortcutsTab: View {
     var body: some View {
         Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 16) {
             GridRow {
-                Text(L("Show Sleep Timer"))
+                Text(L("Show Doze"))
                     .foregroundStyle(.secondary)
                     .frame(width: kLabelW, alignment: .trailing)
                     .gridColumnAlignment(.trailing)

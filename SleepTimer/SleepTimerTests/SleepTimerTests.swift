@@ -189,19 +189,19 @@ final class LocalizationTests: XCTestCase {
 
     func testEnglishReturnsKey() {
         UserDefaults.standard.set("English", forKey: "appLanguage")
-        XCTAssertEqual(L("Sleep Timer"), "Sleep Timer")
+        XCTAssertEqual(L("Doze"), "Doze")
         XCTAssertEqual(L("Cancel"), "Cancel")
     }
 
     func testSlovakTranslation() {
         UserDefaults.standard.set("Slovak", forKey: "appLanguage")
-        XCTAssertEqual(L("Sleep Timer"), "Časovač spánku")
+        XCTAssertEqual(L("Doze"), "Doze")
         XCTAssertEqual(L("Cancel"), "Zrušiť")
     }
 
     func testGermanTranslation() {
         UserDefaults.standard.set("German", forKey: "appLanguage")
-        XCTAssertEqual(L("Sleep Timer"), "Schlaf-Timer")
+        XCTAssertEqual(L("Doze"), "Doze")
     }
 
     func testMissingKeyReturnsKey() {

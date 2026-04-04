@@ -5,9 +5,9 @@ import Foundation
 private let strings: [String: [String: String]] = [
 
     // ── ContentView ─────────────────────────────────────────────
-    "Sleep Timer": [
-        "sk": "Časovač spánku", "de": "Schlaf-Timer",
-        "fr": "Minuterie de mise en veille", "es": "Temporizador de sueño"
+    "Doze": [
+        "sk": "Doze", "de": "Doze",
+        "fr": "Doze", "es": "Doze"
     ],
     "Check for Updates...": [
         "sk": "Skontrolovať aktualizácie…", "de": "Nach Updates suchen…",
@@ -21,9 +21,9 @@ private let strings: [String: [String: String]] = [
         "sk": "Nastavenia…", "de": "Einstellungen…",
         "fr": "Réglages…", "es": "Ajustes…"
     ],
-    "Quit Sleep Timer": [
-        "sk": "Ukončiť Časovač spánku", "de": "Schlaf-Timer beenden",
-        "fr": "Quitter Minuterie", "es": "Salir del Temporizador"
+    "Quit Doze": [
+        "sk": "Ukončiť Doze", "de": "Doze beenden",
+        "fr": "Quitter Doze", "es": "Salir de Doze"
     ],
     "30 min": [:],
     "45 min": [:],
@@ -58,9 +58,9 @@ private let strings: [String: [String: String]] = [
     ],
 
     // ── SettingsView ────────────────────────────────────────────
-    "Sleep Timer Settings": [
-        "sk": "Nastavenia časovača", "de": "Schlaf-Timer Einstellungen",
-        "fr": "Réglages de la minuterie", "es": "Ajustes del temporizador"
+    "Doze Settings": [
+        "sk": "Nastavenia Doze", "de": "Doze Einstellungen",
+        "fr": "Réglages de Doze", "es": "Ajustes de Doze"
     ],
     "General": [
         "sk": "Všeobecné", "de": "Allgemein",
@@ -126,9 +126,9 @@ private let strings: [String: [String: String]] = [
         "sk": "Zobraziť odpočet v paneli menu", "de": "Countdown in Menüleiste anzeigen",
         "fr": "Afficher le compte à rebours", "es": "Mostrar cuenta regresiva"
     ],
-    "Show Sleep Timer": [
-        "sk": "Zobraziť časovač", "de": "Schlaf-Timer anzeigen",
-        "fr": "Afficher la minuterie", "es": "Mostrar temporizador"
+    "Show Doze": [
+        "sk": "Zobraziť Doze", "de": "Doze anzeigen",
+        "fr": "Afficher Doze", "es": "Mostrar Doze"
     ],
     "Start Default Timer": [
         "sk": "Spustiť predvolený časovač", "de": "Standard-Timer starten",

@@ -1,6 +1,6 @@
-# Sleep Timer for macOS
+# Doze for macOS
 
-A native macOS app that puts your MacBook to sleep after a specified time interval.
+A native macOS menu bar app that puts your Mac to sleep after a specified time interval.
 
 ## Features
 
@@ -11,7 +11,7 @@ A native macOS app that puts your MacBook to sleep after a specified time interv
 
 ## Requirements
 
-- macOS 13.0 or later
+- macOS 14.0 or later
 - Xcode 15.0 or later
 
 ## Installation
@@ -44,7 +44,7 @@ Simply press `Cmd + R` in Xcode to run the app directly without installing.
 
 ## Usage
 
-1. Launch the Sleep Timer app
+1. Launch the Doze app
 2. Choose your desired sleep duration:
    - 30 minutes
    - 45 minutes
@@ -55,21 +55,13 @@ Simply press `Cmd + R` in Xcode to run the app directly without installing.
 
 ## How It Works
 
-The app uses AppleScript to trigger the system sleep command when the timer expires. It's completely safe and uses the same sleep mechanism as closing your MacBook lid or selecting Sleep from the Apple menu.
-
-## Permissions
-
-The app requires permission to send AppleScript commands to System Events. macOS will prompt you to grant this permission the first time you use the sleep function.
+The app uses IOKit (`IOPMSleepSystem`) to trigger the system sleep command when the timer expires. It's completely safe and uses the same sleep mechanism as closing your MacBook lid or selecting Sleep from the Apple menu. No special permissions are required.
 
 ## Troubleshooting
 
-**App doesn't put Mac to sleep:**
-- Go to System Settings → Privacy & Security → Automation
-- Ensure "Sleep Timer" has permission to control "System Events"
-
 **Can't build the project:**
 - Make sure you have Xcode 15.0 or later installed
-- Verify your macOS version is 13.0 or later
+- Verify your macOS version is 14.0 or later
 - Try cleaning the build folder: Product → Clean Build Folder (Cmd + Shift + K)
 
 ## Project Structure

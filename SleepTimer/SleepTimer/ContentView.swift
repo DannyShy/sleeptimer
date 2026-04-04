@@ -77,7 +77,7 @@ struct ContentView: View {
 
             // ── Header ───────────────────────────────────────────────
             HStack {
-                Text(L("Sleep Timer"))
+                Text(L("Doze"))
                     .font(.title3.weight(.bold))
                 Spacer()
                 Menu {
@@ -86,7 +86,7 @@ struct ContentView: View {
                     Button(L("Check for Updates..."))  { settings.checkForUpdates() }
                     Button(L("Send Feedback..."))      { settings.sendFeedback() }
                     Divider()
-                    Button(L("Quit Sleep Timer"))     { NSApplication.shared.terminate(nil) }
+                    Button(L("Quit Doze"))     { NSApplication.shared.terminate(nil) }
                 } label: {
                     Image(systemName: "gearshape")
                         .font(.system(size: 16, weight: .semibold))

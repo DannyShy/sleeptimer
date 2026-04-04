@@ -7,6 +7,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
     private var statusItem: NSStatusItem!
     private var popover: NSPopover!
     private var settingsWindow: NSWindow?
+    var isTransitioningPolicy = false
     private var settingsHostingController: NSHostingController<SettingsView>?
     let sleepManager = SleepManager()
     let warningWindowManager = WarningWindowManager()
@@ -47,7 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem.button {
             let icon = NSImage(systemSymbolName: "hourglass",
-                               accessibilityDescription: "Sleep Timer")
+                               accessibilityDescription: "Doze")
             icon?.isTemplate = true
             button.image = icon
             button.action = #selector(togglePopover(_:))
@@ -134,7 +135,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
                 styleMask: [.titled, .closable, .fullSizeContentView],
                 backing: .buffered, defer: false
             )
-            window.title = "Sleep Timer Settings"
+            window.title = "Doze Settings"
             window.titleVisibility = .hidden
             window.titlebarAppearsTransparent = true
             window.isMovableByWindowBackground = true
@@ -172,6 +173,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
     func windowWillClose(_ notification: Notification) {
         guard let closing = notification.object as? NSWindow,
               closing === settingsWindow else { return }
+        if isTransitioningPolicy { return }
         settingsWindow = nil
         settingsHostingController = nil
     }

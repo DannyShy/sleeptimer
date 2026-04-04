@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00C9D61EC0B1D2141F50A995 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EBE05F314E3D0B1049188067 /* Assets.xcassets */; };
+		0343DAF436638C77B6489991 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 41D93530EB03C1FC57581AB3 /* PrivacyInfo.xcprivacy */; };
 		2845D6A88CF21AB52CEF7FF5 /* SleepManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 685DE5D924C9D24186AB9F69 /* SleepManager.swift */; };
 		289F5BCFE075B6A3F61E9BFF /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2219BEEA7EB887F88DCCB963 /* VisualEffectView.swift */; };
 		348F2B9D09A1BDE984A81475 /* CountdownWarningDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BFC38AAB4F029EEB28C08F /* CountdownWarningDialog.swift */; };
@@ -21,22 +22,12 @@
 		C6A85D06AB69955A758B91D7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B8ACC872315C84BAFBB5F66 /* AppDelegate.swift */; };
 		C89434613E75CC9D72698E88 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24C525AE8616B2C879BC905 /* ColorExtension.swift */; };
 		E256434B3B05C59FF37C5C4F /* WarningWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CB1C5A0E535DF0C91E44B44 /* WarningWindowManager.swift */; };
-		AABB000000000002 /* SleepTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB000000000001 /* SleepTimerTests.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		AABB00000000000A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DAD2F5859F460065EA0DD438 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7DED326D8BC545D55AEE09EC;
-			remoteInfo = SleepTimer;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		2219BEEA7EB887F88DCCB963 /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 		2C30E20B448B595F84356C08 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		41D93530EB03C1FC57581AB3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		52A269E96EFD25551A944E70 /* SleepTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerApp.swift; sourceTree = "<group>"; };
 		5329D8B25C79178B44313DD7 /* TimerButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerButtonStyle.swift; sourceTree = "<group>"; };
 		53BFC38AAB4F029EEB28C08F /* CountdownWarningDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownWarningDialog.swift; sourceTree = "<group>"; };
@@ -52,8 +43,6 @@
 		EBE05F314E3D0B1049188067 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F4C84259F963DAF3D21F9800 /* SleepTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SleepTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F92A7A89637B46B796584694 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		AABB000000000001 /* SleepTimerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerTests.swift; sourceTree = "<group>"; };
-		AABB000000000003 /* SleepTimerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SleepTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -67,6 +56,7 @@
 				53BFC38AAB4F029EEB28C08F /* CountdownWarningDialog.swift */,
 				F92A7A89637B46B796584694 /* Info.plist */,
 				6FEE65FD8461D4EC30D6B713 /* Localization.swift */,
+				41D93530EB03C1FC57581AB3 /* PrivacyInfo.xcprivacy */,
 				C388BE85775F4FF10422BF42 /* SettingsManager.swift */,
 				B327B40CA474DE2B6DBD50E8 /* SettingsView.swift */,
 				685DE5D924C9D24186AB9F69 /* SleepManager.swift */,
@@ -84,7 +74,6 @@
 			isa = PBXGroup;
 			children = (
 				33673EBBB473A51E5F8204A1 /* SleepTimer */,
-				AABB000000000004 /* SleepTimerTests */,
 				FAC7F7F32BD6F6B9E3970384 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,17 +90,8 @@
 			isa = PBXGroup;
 			children = (
 				F4C84259F963DAF3D21F9800 /* SleepTimer.app */,
-				AABB000000000003 /* SleepTimerTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		AABB000000000004 /* SleepTimerTests */ = {
-			isa = PBXGroup;
-			children = (
-				AABB000000000001 /* SleepTimerTests.swift */,
-			);
-			path = SleepTimerTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -134,22 +114,6 @@
 			productName = SleepTimer;
 			productReference = F4C84259F963DAF3D21F9800 /* SleepTimer.app */;
 			productType = "com.apple.product-type.application";
-		};
-		AABB000000000006 /* SleepTimerTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AABB000000000009 /* Build configuration list for PBXNativeTarget "SleepTimerTests" */;
-			buildPhases = (
-				AABB000000000005 /* Sources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				AABB00000000000B /* PBXTargetDependency */,
-			);
-			name = SleepTimerTests;
-			productName = SleepTimerTests;
-			productReference = AABB000000000003 /* SleepTimerTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -175,7 +139,6 @@
 			projectRoot = "";
 			targets = (
 				7DED326D8BC545D55AEE09EC /* SleepTimer */,
-				AABB000000000006 /* SleepTimerTests */,
 			);
 		};
 /* End PBXProject section */
@@ -187,6 +150,7 @@
 			files = (
 				00C9D61EC0B1D2141F50A995 /* Assets.xcassets in Resources */,
 				3F520A47EF97805256CE39CB /* Preview Assets.xcassets in Resources */,
+				0343DAF436638C77B6489991 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,23 +176,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AABB000000000005 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AABB000000000002 /* SleepTimerTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		AABB00000000000B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7DED326D8BC545D55AEE09EC /* SleepTimer */;
-			targetProxy = AABB00000000000A /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2227614E25712E7D66047E8F /* Debug */ = {
@@ -236,7 +184,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SleepTimer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -244,6 +192,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sklad.projekty.SleepTimer;
+				PRODUCT_NAME = Doze;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -370,7 +319,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SleepTimer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -378,35 +327,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sklad.projekty.SleepTimer;
+				PRODUCT_NAME = Doze;
 				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		AABB000000000007 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sklad.projekty.SleepTimerTests;
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SleepTimer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SleepTimer";
-			};
-			name = Debug;
-		};
-		AABB000000000008 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sklad.projekty.SleepTimerTests;
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SleepTimer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SleepTimer";
 			};
 			name = Release;
 		};
@@ -427,15 +349,6 @@
 			buildConfigurations = (
 				615CBE130BC477BBEC2AC0E5 /* Debug */,
 				3563323C78BB7C6BFB7C6F19 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		AABB000000000009 /* Build configuration list for PBXNativeTarget "SleepTimerTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AABB000000000007 /* Debug */,
-				AABB000000000008 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

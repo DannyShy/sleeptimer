@@ -86,10 +86,25 @@ final class SettingsManager: ObservableObject {
     // MARK: - Dock Icon
 
     func setDockIconVisible(_ visible: Bool) {
+        let appDelegate = NSApp.delegate as? AppDelegate
+        let visibleWindows = NSApp.windows.filter { $0.isVisible }
+
+        // Hide windows ourselves before the policy change so the user
+        // doesn't see macOS's jarring deactivation flash.
+        for window in visibleWindows {
+            window.orderOut(nil)
+        }
+
+        appDelegate?.isTransitioningPolicy = true
         NSApp.setActivationPolicy(visible ? .regular : .accessory)
         log("Dock icon \(visible ? "shown" : "hidden")")
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            appDelegate?.isTransitioningPolicy = false
             NSApp.activate(ignoringOtherApps: true)
+            for window in visibleWindows {
+                window.makeKeyAndOrderFront(nil)
+            }
         }
     }
 
@@ -159,7 +174,7 @@ final class SettingsManager: ObservableObject {
 
     func exportLogs() {
         let panel = NSSavePanel()
-        panel.nameFieldStringValue = "SleepTimer-logs.txt"
+        panel.nameFieldStringValue = "Doze-logs.txt"
         panel.allowedContentTypes = [.plainText]
         panel.begin { [weak self] response in
             guard response == .OK, let url = panel.url, let self else { return }
@@ -189,7 +204,7 @@ final class SettingsManager: ObservableObject {
     func sendFeedback() {
         let diagnostics = generateDiagnostics()
         let tempURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("SleepTimer-diagnostics.txt")
+            .appendingPathComponent("Doze-diagnostics.txt")
 
         do {
             try diagnostics.write(to: tempURL, atomically: true, encoding: .utf8)
@@ -198,7 +213,7 @@ final class SettingsManager: ObservableObject {
             return
         }
 
-        let subject = "Sleep Timer \(appVersion) — Feedback"
+        let subject = "Doze \(appVersion) — Feedback"
         let body = "Please describe your issue or suggestion below:\n\n\n---\nDiagnostic report is attached automatically."
 
         // Try NSSharingService (auto-attaches the file)
@@ -210,7 +225,7 @@ final class SettingsManager: ObservableObject {
         } else {
             // Fallback: save file via NSSavePanel, reveal in Finder, open mailto
             let panel = NSSavePanel()
-            panel.nameFieldStringValue = "SleepTimer-diagnostics.txt"
+            panel.nameFieldStringValue = "Doze-diagnostics.txt"
             panel.allowedContentTypes = [.plainText]
             panel.begin { [weak self] response in
                 guard response == .OK, let url = panel.url else { return }
@@ -239,7 +254,7 @@ final class SettingsManager: ObservableObject {
         let defaults = UserDefaults.standard
 
         var lines: [String] = []
-        lines.append("═══ Sleep Timer Diagnostic Report ═══")
+        lines.append("═══ Doze Diagnostic Report ═══")
         lines.append("")
 
         // App metadata
