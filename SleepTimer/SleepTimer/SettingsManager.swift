@@ -218,7 +218,7 @@ final class SettingsManager: ObservableObject {
 
         // Try NSSharingService (auto-attaches the file)
         if let emailService = NSSharingService(named: .composeEmail) {
-            emailService.recipients = ["support@yourdomain.com"]  // TODO: Replace with real email
+            emailService.recipients = ["doze.support@glitcher.studio"]
             emailService.subject = subject
             emailService.perform(withItems: [body as NSString, tempURL as NSURL])
             log("Feedback email composed via NSSharingService")
@@ -241,7 +241,7 @@ final class SettingsManager: ObservableObject {
                 let mailSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
                 let mailBody = "Please attach the diagnostics file from your Desktop and describe your issue below."
                     .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-                if let mailto = URL(string: "mailto:support@yourdomain.com?subject=\(mailSubject)&body=\(mailBody)") {
+                if let mailto = URL(string: "mailto:doze.support@glitcher.studio?subject=\(mailSubject)&body=\(mailBody)") {
                     NSWorkspace.shared.open(mailto)
                 }
             }
