@@ -46,7 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         // Build status item
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem.button {
-            let icon = NSImage(systemSymbolName: "moon.zzz.fill",
+            let icon = NSImage(systemSymbolName: "hourglass",
                                accessibilityDescription: "Sleep Timer")
             icon?.isTemplate = true
             button.image = icon
