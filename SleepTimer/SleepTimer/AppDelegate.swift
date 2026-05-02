@@ -105,7 +105,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         }
     }
 
-    // Make popover window transparent so VisualEffectView shows desktop through
     func popoverWillShow(_ notification: Notification) {
         DispatchQueue.main.async {
             if let window = self.popover.contentViewController?.view.window {
