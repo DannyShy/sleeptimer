@@ -1,6 +1,6 @@
 name: SleepTimer
 options:
-  bundleIdPrefix: com.sklad.projekty
+  bundleIdPrefix: com.glitcher
 
 targets:
   SleepTimer:
@@ -10,6 +10,7 @@ targets:
     sources:
       - path: SleepTimer
     settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.glitcher.doze
       PRODUCT_NAME: Doze
       PRODUCT_MODULE_NAME: SleepTimer
       INFOPLIST_FILE: SleepTimer/Info.plist
@@ -31,7 +32,7 @@ targets:
     settings:
       BUNDLE_LOADER: "$(TEST_HOST)"
       TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Doze.app/Contents/MacOS/Doze"
-      PRODUCT_BUNDLE_IDENTIFIER: com.sklad.projekty.SleepTimer.tests
+      PRODUCT_BUNDLE_IDENTIFIER: com.glitcher.doze.tests
       DEVELOPMENT_TEAM: 47Z9BFSWTD
       CODE_SIGN_STYLE: Automatic
       SWIFT_VERSION: "5.0"
