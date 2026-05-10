@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -39,7 +39,7 @@
 		2C30E20B448B595F84356C08 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2FBE99D0B3CF78BE186AC6AD /* SleepTimerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SleepTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4086FCFBFEF24AE65076EB3E /* SleepTimerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerTests.swift; sourceTree = "<group>"; };
-		41D93530EB03C1FC57581AB3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		41D93530EB03C1FC57581AB3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		52A269E96EFD25551A944E70 /* SleepTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerApp.swift; sourceTree = "<group>"; };
 		53BFC38AAB4F029EEB28C08F /* CountdownWarningDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownWarningDialog.swift; sourceTree = "<group>"; };
 		685DE5D924C9D24186AB9F69 /* SleepManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepManager.swift; sourceTree = "<group>"; };
@@ -52,7 +52,7 @@
 		C388BE85775F4FF10422BF42 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		D19D46FFB58B6A9D8ECE51EA /* SleepTimer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SleepTimer.entitlements; sourceTree = "<group>"; };
 		EBE05F314E3D0B1049188067 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		F4C84259F963DAF3D21F9800 /* SleepTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SleepTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4C84259F963DAF3D21F9800 /* Doze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Doze.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F92A7A89637B46B796584694 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -108,7 +108,7 @@
 		FAC7F7F32BD6F6B9E3970384 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F4C84259F963DAF3D21F9800 /* SleepTimer.app */,
+				F4C84259F963DAF3D21F9800 /* Doze.app */,
 				2FBE99D0B3CF78BE186AC6AD /* SleepTimerTests.xctest */,
 			);
 			name = Products;
@@ -132,7 +132,7 @@
 			packageProductDependencies = (
 			);
 			productName = SleepTimer;
-			productReference = F4C84259F963DAF3D21F9800 /* SleepTimer.app */;
+			productReference = F4C84259F963DAF3D21F9800 /* Doze.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A89F4DD917D956D4D44739F9 /* SleepTimerTests */ = {
@@ -182,7 +182,6 @@
 			);
 			mainGroup = 80BA8CA88610A332A1BEDC81;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -255,6 +254,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SleepTimer/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Doze;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -417,6 +418,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SleepTimer/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Doze;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
