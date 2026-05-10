@@ -187,13 +187,8 @@ final class SettingsManager: ObservableObject {
     // MARK: - Check for Updates
 
     /// Opens the app's Mac App Store page so the user can check for updates.
-    /// Replace the Apple ID placeholder once the app is live on the store.
     func checkForUpdates() {
-        let appStoreID = "XXXXXXXXXX" // TODO: Replace with real Apple ID after first App Store submission
-        guard appStoreID != "XXXXXXXXXX" else {
-            log("checkForUpdates: App Store ID not set yet — skipping")
-            return
-        }
+        let appStoreID = "6766068176"
         if let url = URL(string: "macappstore://apps.apple.com/app/id\(appStoreID)") {
             NSWorkspace.shared.open(url)
             log("Opened Mac App Store for update check")
