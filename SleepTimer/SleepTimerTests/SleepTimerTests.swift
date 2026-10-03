@@ -76,6 +76,12 @@ final class SleepManagerTests: XCTestCase {
         XCTAssertEqual(sut.selectedDuration, 1800) // default
     }
 
+    func testSnoozeKeepsTimerActive() {
+        sut.startTimer(duration: 300)
+        sut.snoozeTimer()
+        XCTAssertTrue(sut.isTimerActive)
+    }
+
     // MARK: - formattedTime
 
     func testFormattedTimeZero() {
@@ -164,6 +170,15 @@ final class SettingsManagerTests: XCTestCase {
         XCTAssertEqual(SettingsManager.shared.defaultDurationSeconds(), 2700)
     }
 
+    func testClosePopoverOnStartDefaultsToTrue() {
+        // Ensure SettingsManager's register(defaults:) has run, then clear any
+        // explicitly stored value. removeObject does not clear the registration
+        // domain, so bool falls back to the registered default (true).
+        _ = SettingsManager.shared
+        UserDefaults.standard.removeObject(forKey: "closePopoverOnStart")
+        XCTAssertTrue(UserDefaults.standard.bool(forKey: "closePopoverOnStart"))
+    }
+
     func testVersionStringFormat() {
         let version = SettingsManager.shared.versionString
         XCTAssertTrue(version.hasPrefix("Version "), "Got: \(version)")
@@ -238,5 +253,30 @@ final class ColorExtensionTests: XCTestCase {
     func testInvalidHex() {
         let color = Color(hex: "XYZ")
         XCTAssertNotNil(color) // Should default to black, not crash
+    }
+}
+
+// MARK: - Popover Auto-Close Tests
+
+final class PopoverAutoCloseTests: XCTestCase {
+
+    func testFreshStartWithSettingOnCloses() {
+        // idle -> running, setting ON
+        XCTAssertTrue(SleepManager.shouldClosePopover(wasActive: false, isActive: true, settingEnabled: true))
+    }
+
+    func testFreshStartWithSettingOffDoesNotClose() {
+        // idle -> running, setting OFF
+        XCTAssertFalse(SleepManager.shouldClosePopover(wasActive: false, isActive: true, settingEnabled: false))
+    }
+
+    func testSnoozeTransitionDoesNotClose() {
+        // running/warning -> running (no change)
+        XCTAssertFalse(SleepManager.shouldClosePopover(wasActive: true, isActive: true, settingEnabled: true))
+    }
+
+    func testCancelTransitionDoesNotClose() {
+        // running -> idle (cancel or expire)
+        XCTAssertFalse(SleepManager.shouldClosePopover(wasActive: true, isActive: false, settingEnabled: true))
     }
 }

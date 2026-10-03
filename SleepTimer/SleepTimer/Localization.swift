@@ -126,6 +126,14 @@ private let strings: [String: [String: String]] = [
         "sk": "Zobraziť odpočet v paneli menu", "de": "Countdown in Menüleiste anzeigen",
         "fr": "Afficher le compte à rebours", "es": "Mostrar cuenta regresiva"
     ],
+    "After start": [
+        "sk": "Po spustení", "de": "Nach dem Start",
+        "fr": "Après le démarrage", "es": "Al iniciar"
+    ],
+    "Close window": [
+        "sk": "Zavrieť okno", "de": "Fenster schließen",
+        "fr": "Fermer la fenêtre", "es": "Cerrar la ventana"
+    ],
     "Show Doze": [
         "sk": "Zobraziť Doze", "de": "Doze anzeigen",
         "fr": "Afficher Doze", "es": "Mostrar Doze"

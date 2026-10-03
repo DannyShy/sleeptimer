@@ -54,6 +54,7 @@ final class SettingsManager: ObservableObject {
             "defaultDuration": "30 min",
             "warningSoundEnabled": true,
             "showCountdownMenuBar": false,
+            "closePopoverOnStart": true,
             "shortcutShowTimer": "",
             "shortcutStartTimer": ""
         ])
@@ -278,6 +279,7 @@ final class SettingsManager: ObservableObject {
         let prefKeys = [
             "openAtLogin", "showDockIcon", "appLanguage", "appAppearance",
             "defaultDuration", "warningSoundEnabled", "showCountdownMenuBar",
+            "closePopoverOnStart",
             "shortcutShowTimer", "shortcutStartTimer", "lastUsedDuration"
         ]
         for key in prefKeys {

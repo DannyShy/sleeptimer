@@ -121,3 +121,14 @@ class SleepManager: ObservableObject {
         return String(format: "%02d:%02d", minutes, seconds)
     }
 }
+
+// MARK: - Popover auto-close decision (pure logic, no UI)
+
+extension SleepManager {
+    /// Returns true only for a fresh start: the timer transitioned from
+    /// inactive to active and the auto-close setting is enabled.
+    /// Snooze (active -> active) and cancel/expire (active -> inactive) never close the popover.
+    static func shouldClosePopover(wasActive: Bool, isActive: Bool, settingEnabled: Bool) -> Bool {
+        !wasActive && isActive && settingEnabled
+    }
+}

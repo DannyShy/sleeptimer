@@ -74,6 +74,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
             .sink { [weak self] _ in self?.updateMenuBarDisplay() }
             .store(in: &cancellables)
 
+        // Auto-close the popover on a fresh timer start (isTimerActive false -> true).
+        // Snooze keeps isTimerActive true, so it never triggers this transition.
+        sleepManager.$isTimerActive
+            .removeDuplicates()
+            .scan((false, false)) { ($0.1, $1) }      // (previous, current)
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] pair in
+                guard let self else { return }
+                let enabled = UserDefaults.standard.bool(forKey: "closePopoverOnStart")
+                guard SleepManager.shouldClosePopover(wasActive: pair.0, isActive: pair.1, settingEnabled: enabled) else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
+                    guard let self, self.popover.isShown, self.sleepManager.isTimerActive else { return }
+                    self.popover.performClose(nil)
+                }
+            }
+            .store(in: &cancellables)
+
         // Register global shortcuts
         settings.registerGlobalShortcuts()
 

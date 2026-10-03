@@ -182,6 +182,7 @@ private struct TimerTab: View {
     @AppStorage("defaultDuration")      private var dur      = "30 min"
     @AppStorage("warningSoundEnabled")  private var warn     = true
     @AppStorage("showCountdownMenuBar") private var menuBar  = false
+    @AppStorage("closePopoverOnStart")  private var closeOnStart = true
 
     private let durations = ["30 min", "45 min", "1h", "Last used"]
 
@@ -206,10 +207,15 @@ private struct TimerTab: View {
                 Text(L("Menu Bar")).foregroundStyle(.secondary)
                 Toggle(L("Show countdown in Menu Bar"), isOn: $menuBar).toggleStyle(.checkbox)
             }
+            GridRow {
+                Text(L("After start")).foregroundStyle(.secondary)
+                Toggle(L("Close window"), isOn: $closeOnStart).toggleStyle(.checkbox)
+            }
         }
         .onChange(of: dur)     { _, val in SettingsManager.shared.log("Default duration: \(val)") }
         .onChange(of: warn)    { _, val in SettingsManager.shared.log("Warning sound: \(val)") }
         .onChange(of: menuBar) { _, val in SettingsManager.shared.log("Menu bar countdown: \(val)") }
+        .onChange(of: closeOnStart) { _, val in SettingsManager.shared.log("Close popover on start: \(val)") }
     }
 }
 
