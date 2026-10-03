@@ -34,3 +34,6 @@ Pods/
 **/backup/
 **/*backup*/
 **/*2025*/
+
+# AiderDesk
+.aider*
