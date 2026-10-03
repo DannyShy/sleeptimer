@@ -221,26 +221,72 @@ private struct ShortcutsTab: View {
     @AppStorage("shortcutStartTimer") private var scStart = ""
 
     var body: some View {
-        Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 16) {
-            GridRow {
-                Text(L("Show Doze"))
-                    .foregroundStyle(.secondary)
-                    .frame(width: kLabelW, alignment: .trailing)
-                    .gridColumnAlignment(.trailing)
-                Pill(shortcut: $scShow)
-                    .gridColumnAlignment(.leading)
+        VStack(alignment: .leading, spacing: 16) {
+            if !settings.isAccessibilityTrusted {
+                AccessibilityBanner()
             }
-            GridRow {
-                Text(L("Start Default Timer")).foregroundStyle(.secondary)
-                Pill(shortcut: $scStart)
-            }
-            GridRow {
-                Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
-                Text(L("Click a field and press a key combination to record."))
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+            Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 16) {
+                GridRow {
+                    Text(L("Show Doze"))
+                        .foregroundStyle(.secondary)
+                        .frame(width: kLabelW, alignment: .trailing)
+                        .gridColumnAlignment(.trailing)
+                    Pill(shortcut: $scShow)
+                        .gridColumnAlignment(.leading)
+                }
+                GridRow {
+                    Text(L("Start Default Timer")).foregroundStyle(.secondary)
+                    Pill(shortcut: $scStart)
+                }
+                GridRow {
+                    Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
+                    Text(L("Click a field and press a key combination to record."))
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
             }
         }
+    }
+}
+
+// MARK: - Accessibility warning banner
+
+private struct AccessibilityBanner: View {
+    @ObservedObject private var settings = SettingsManager.shared
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 16))
+                .foregroundStyle(.orange)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(L("Global shortcuts require Accessibility permission."))
+                    .font(.system(size: 12, weight: .medium))
+                Text(L("Without it, shortcuts only work when Doze is the active app."))
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                HStack(spacing: 8) {
+                    Button(L("Grant Permission")) {
+                        settings.requestAccessibilityPermission()
+                    }
+                    .controlSize(.small)
+                    Button(L("Open System Settings")) {
+                        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                            NSWorkspace.shared.open(url)
+                        }
+                    }
+                    .controlSize(.small)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(10)
+        .background(Color.orange.opacity(0.10))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .strokeBorder(Color.orange.opacity(0.3), lineWidth: 0.5)
+        )
     }
 }
 

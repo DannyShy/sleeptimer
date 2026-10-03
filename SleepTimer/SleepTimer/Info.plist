@@ -28,5 +28,7 @@
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSAccessibilityUsageDescription</key>
+	<string>Doze uses Accessibility access to detect your global keyboard shortcuts so you can show the timer or start a sleep timer from any app.</string>
 </dict>
 </plist>

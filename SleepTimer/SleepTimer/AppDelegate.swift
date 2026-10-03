@@ -78,6 +78,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         settings.registerGlobalShortcuts()
 
         settings.log("App ready")
+
+        // If macOS terminated us (e.g. TCC accessibility toggle) while
+        // the settings window was open, restore it on relaunch.
+        if UserDefaults.standard.bool(forKey: "settingsWindowOpen") {
+            settings.log("Restoring settings window after relaunch")
+            openSettings()
+        }
     }
 
     // MARK: - Menu bar countdown
@@ -161,11 +168,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
             window.delegate = self
             window.center()
             window.isReleasedWhenClosed = false
+            window.hidesOnDeactivate = false
+            window.collectionBehavior = [.moveToActiveSpace, .managed]
             self.settingsWindow = window
             self.settingsHostingController = hostingController
 
             window.makeKeyAndOrderFront(nil)
             NSApp.activate(ignoringOtherApps: true)
+
+            settings.startAccessibilityPolling()
+            UserDefaults.standard.set(true, forKey: "settingsWindowOpen")
         }
     }
 
@@ -173,11 +185,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         guard let closing = notification.object as? NSWindow,
               closing === settingsWindow else { return }
         if isTransitioningPolicy { return }
+        settings.log("Settings window closing (isActive=\(NSApp.isActive), keyWindow=\(NSApp.keyWindow?.title ?? "nil"))")
         settingsWindow = nil
         settingsHostingController = nil
+        settings.stopAccessibilityPolling()
+        UserDefaults.standard.set(false, forKey: "settingsWindowOpen")
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return false
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        settings.log("App will terminate")
     }
 }

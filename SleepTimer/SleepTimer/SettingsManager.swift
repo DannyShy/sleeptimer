@@ -3,6 +3,7 @@ import AppKit
 import SwiftUI
 import ServiceManagement
 import UniformTypeIdentifiers
+import ApplicationServices
 
 final class SettingsManager: ObservableObject {
     static let shared = SettingsManager()
@@ -20,6 +21,10 @@ final class SettingsManager: ObservableObject {
     var onTogglePopover: (() -> Void)?
     var onStartDefaultTimer: (() -> Void)?
     var onAppearanceChanged: ((NSAppearance?) -> Void)?
+
+    // MARK: - Accessibility
+    @Published var isAccessibilityTrusted: Bool = AXIsProcessTrusted()
+    private var accessibilityPollTimer: Timer?
 
     // MARK: - Hotkey monitors
     private var globalShowMonitor: Any?
@@ -302,8 +307,47 @@ final class SettingsManager: ObservableObject {
 
     // MARK: - Global Shortcuts
 
+    // MARK: - Accessibility Permission
+
+    func isAccessibilityTrustedStatus() -> Bool {
+        return AXIsProcessTrusted()
+    }
+
+    @discardableResult
+    func requestAccessibilityPermission() -> Bool {
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+        let trusted = AXIsProcessTrustedWithOptions(options)
+        isAccessibilityTrusted = trusted
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+            NSWorkspace.shared.open(url)
+        }
+        return trusted
+    }
+
+    func startAccessibilityPolling() {
+        stopAccessibilityPolling()
+        accessibilityPollTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            let trusted = AXIsProcessTrusted()
+            if trusted != self.isAccessibilityTrusted {
+                DispatchQueue.main.async {
+                    self.isAccessibilityTrusted = trusted
+                    if trusted { self.registerGlobalShortcuts() }
+                }
+            }
+        }
+    }
+
+    func stopAccessibilityPolling() {
+        accessibilityPollTimer?.invalidate()
+        accessibilityPollTimer = nil
+    }
+
+    // MARK: - Global Shortcuts
+
     func registerGlobalShortcuts() {
         unregisterGlobalShortcuts()
+        isAccessibilityTrusted = AXIsProcessTrusted()
         let show = UserDefaults.standard.string(forKey: "shortcutShowTimer") ?? ""
         let start = UserDefaults.standard.string(forKey: "shortcutStartTimer") ?? ""
 
