@@ -1,5 +1,7 @@
 import XCTest
 import SwiftUI
+import AppKit
+import Carbon.HIToolbox
 @testable import SleepTimer
 
 final class SleepManagerTests: XCTestCase {
@@ -198,6 +200,69 @@ final class SettingsManagerTests: XCTestCase {
     }
 }
 
+// MARK: - Global Shortcut Tests
+
+final class GlobalShortcutTests: XCTestCase {
+
+    // MARK: isAcceptableShortcut
+
+    func testCommandOnlyAccepted() {
+        XCTAssertTrue(SettingsManager.isAcceptableShortcut(modifiers: [.command]))
+    }
+
+    func testControlOnlyAccepted() {
+        XCTAssertTrue(SettingsManager.isAcceptableShortcut(modifiers: [.control]))
+    }
+
+    func testOptionOnlyRejected() {
+        XCTAssertFalse(SettingsManager.isAcceptableShortcut(modifiers: [.option]))
+    }
+
+    func testShiftOnlyRejected() {
+        XCTAssertFalse(SettingsManager.isAcceptableShortcut(modifiers: [.shift]))
+    }
+
+    func testOptionShiftRejected() {
+        XCTAssertFalse(SettingsManager.isAcceptableShortcut(modifiers: [.option, .shift]))
+    }
+
+    func testControlOptionCommandAccepted() {
+        XCTAssertTrue(SettingsManager.isAcceptableShortcut(modifiers: [.control, .option, .command]))
+    }
+
+    // MARK: Legacy shortcut migration
+
+    func testLegacyMigrationRemovesOldKeys() {
+        let defaults = UserDefaults.standard
+        defaults.set("⌘L", forKey: "shortcutShowTimer")
+        defaults.set("⌥S", forKey: "shortcutStartTimer")
+        XCTAssertTrue(SettingsManager.migrateLegacyShortcuts())
+        XCTAssertNil(defaults.string(forKey: "shortcutShowTimer"))
+        XCTAssertNil(defaults.string(forKey: "shortcutStartTimer"))
+    }
+
+    func testLegacyMigrationSecondRunIsNoOp() {
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "shortcutShowTimer")
+        defaults.removeObject(forKey: "shortcutStartTimer")
+        XCTAssertFalse(SettingsManager.migrateLegacyShortcuts())
+        XCTAssertNil(defaults.string(forKey: "shortcutShowTimer"))
+        XCTAssertNil(defaults.string(forKey: "shortcutStartTimer"))
+    }
+
+    // MARK: Default shortcuts
+
+    func testShowDozeDefaultShortcutIsControlOptionCommandD() {
+        XCTAssertEqual(SettingsManager.defaultShowDozeShortcutInfo?.carbonKeyCode, Int(kVK_ANSI_D))
+        XCTAssertEqual(SettingsManager.defaultShowDozeShortcutInfo?.modifiers, [.control, .option, .command])
+    }
+
+    func testStartDefaultTimerDefaultShortcutIsControlOptionCommandS() {
+        XCTAssertEqual(SettingsManager.defaultStartDefaultTimerShortcutInfo?.carbonKeyCode, Int(kVK_ANSI_S))
+        XCTAssertEqual(SettingsManager.defaultStartDefaultTimerShortcutInfo?.modifiers, [.control, .option, .command])
+    }
+}
+
 // MARK: - Localization Tests
 
 final class LocalizationTests: XCTestCase {
@@ -222,6 +287,20 @@ final class LocalizationTests: XCTestCase {
     func testMissingKeyReturnsKey() {
         UserDefaults.standard.set("Slovak", forKey: "appLanguage")
         XCTAssertEqual(L("nonexistent_key_xyz"), "nonexistent_key_xyz")
+    }
+
+    func testAllEntriesHaveAllLanguages() {
+        let allowListedEmptyKeys: Set<String> = ["30 min", "45 min", "1h"]
+        for (key, translations) in strings {
+            if translations.isEmpty {
+                XCTAssertTrue(allowListedEmptyKeys.contains(key),
+                              "Key \"\(key)\" has an empty translation map but is not in the allow-list")
+                continue
+            }
+            let missing = ["sk", "de", "fr", "es"].filter { translations[$0]?.isEmpty != false }
+            XCTAssertTrue(missing.isEmpty,
+                          "Key \"\(key)\" missing translations for: \(missing.joined(separator: ", "))")
+        }
     }
 
     override func tearDown() {
@@ -278,5 +357,40 @@ final class PopoverAutoCloseTests: XCTestCase {
     func testCancelTransitionDoesNotClose() {
         // running -> idle (cancel or expire)
         XCTAssertFalse(SleepManager.shouldClosePopover(wasActive: true, isActive: false, settingEnabled: true))
+    }
+}
+
+// MARK: - Settings Window Geometry Tests
+
+final class SettingsWindowGeometryTests: XCTestCase {
+
+    func testTopAnchoredFrameGrowsDownward() {
+        // Growing: top edge (maxY) stays fixed, height increases, origin.y
+        // decreases by the height difference.
+        let current = NSRect(x: 100, y: 200, width: 500, height: 320)
+        let result = AppDelegate.topAnchoredFrame(current: current,
+                                                  newContentHeight: 400,
+                                                  chromeHeight: 28,
+                                                  width: 500)
+        XCTAssertEqual(result.width, 500, accuracy: 0.001)
+        XCTAssertEqual(result.height, 428, accuracy: 0.001)
+        XCTAssertEqual(result.maxY, current.maxY, accuracy: 0.001)
+        XCTAssertEqual(result.minY, 92, accuracy: 0.001)  // 520 - 428
+        XCTAssertEqual(result.minX, 100, accuracy: 0.001)
+    }
+
+    func testTopAnchoredFrameShrinksUpwardFromBottom() {
+        // Shrinking: top edge (maxY) stays fixed, height decreases, origin.y
+        // increases by the height difference.
+        let current = NSRect(x: 100, y: 92, width: 500, height: 428)
+        let result = AppDelegate.topAnchoredFrame(current: current,
+                                                  newContentHeight: 240,
+                                                  chromeHeight: 28,
+                                                  width: 500)
+        XCTAssertEqual(result.width, 500, accuracy: 0.001)
+        XCTAssertEqual(result.height, 268, accuracy: 0.001)
+        XCTAssertEqual(result.maxY, current.maxY, accuracy: 0.001)
+        XCTAssertEqual(result.minY, 252, accuracy: 0.001)  // 520 - 268
+        XCTAssertEqual(result.minX, 100, accuracy: 0.001)
     }
 }

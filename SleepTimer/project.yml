@@ -2,6 +2,11 @@ name: SleepTimer
 options:
   bundleIdPrefix: com.glitcher
 
+packages:
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    from: 3.1.0
+
 targets:
   SleepTimer:
     type: application
@@ -9,6 +14,8 @@ targets:
     deploymentTarget: "14.0"
     sources:
       - path: SleepTimer
+    dependencies:
+      - package: KeyboardShortcuts
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.glitcher.doze
       PRODUCT_NAME: Doze

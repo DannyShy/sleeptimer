@@ -15,6 +15,7 @@
 		3F520A47EF97805256CE39CB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A349BAD9F2A788F44F759AE /* Preview Assets.xcassets */; };
 		43D808C94154BC1B6DBC1D1B /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C388BE85775F4FF10422BF42 /* SettingsManager.swift */; };
 		69C14C7F23790D6DBB696A7F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C30E20B448B595F84356C08 /* ContentView.swift */; };
+		77F553FA2C68BA20DC669300 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = B918265EE1B62E2613D60593 /* KeyboardShortcuts */; };
 		894FB2C9FF751B2E16D3944F /* SleepTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A269E96EFD25551A944E70 /* SleepTimerApp.swift */; };
 		8A172A88FF403F10B3F75595 /* SleepTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4086FCFBFEF24AE65076EB3E /* SleepTimerTests.swift */; };
 		B05E9BEFDA6249C0B66A40F0 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE65FD8461D4EC30D6B713 /* Localization.swift */; };
@@ -55,6 +56,17 @@
 		F4C84259F963DAF3D21F9800 /* SleepTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SleepTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F92A7A89637B46B796584694 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1FF1624A86C12A70E22CB2C4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				77F553FA2C68BA20DC669300 /* KeyboardShortcuts in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		33673EBBB473A51E5F8204A1 /* SleepTimer */ = {
@@ -123,6 +135,7 @@
 			buildPhases = (
 				BA723A351FB4334D55E877BA /* Sources */,
 				85D960546C3D0DDA4E287107 /* Resources */,
+				1FF1624A86C12A70E22CB2C4 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -130,6 +143,7 @@
 			);
 			name = SleepTimer;
 			packageProductDependencies = (
+				B918265EE1B62E2613D60593 /* KeyboardShortcuts */,
 			);
 			productName = SleepTimer;
 			productReference = F4C84259F963DAF3D21F9800 /* SleepTimer.app */;
@@ -182,6 +196,9 @@
 			);
 			mainGroup = 80BA8CA88610A332A1BEDC81;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				ADCA0D7B34301840992E1702 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
@@ -481,6 +498,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		ADCA0D7B34301840992E1702 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B918265EE1B62E2613D60593 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ADCA0D7B34301840992E1702 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DAD2F5859F460065EA0DD438 /* Project object */;
 }

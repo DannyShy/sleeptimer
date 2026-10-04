@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Runtime localization engine (instant hot-reload, no restart)
 
-private let strings: [String: [String: String]] = [
+let strings: [String: [String: String]] = [
 
     // ── ContentView ─────────────────────────────────────────────
     "Doze": [
@@ -186,6 +186,9 @@ private let langToCode: [String: String] = [
 
 /// Look up a localized string at runtime. Returns the English key if no translation exists.
 func L(_ key: String) -> String {
+    #if DEBUG
+    if strings[key] == nil { print("⚠️ Missing localization key: \"\(key)\"") }
+    #endif
     let lang = UserDefaults.standard.string(forKey: "appLanguage") ?? "English"
     let code = langToCode[lang] ?? "en"
     if code == "en" { return key }

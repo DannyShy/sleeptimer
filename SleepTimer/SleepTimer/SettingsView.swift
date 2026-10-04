@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import KeyboardShortcuts
 
 // MARK: - Tab enum
 
@@ -23,6 +24,8 @@ private let kLabelW: CGFloat = 160
 struct SettingsView: View {
     @ObservedObject private var settings = SettingsManager.shared
     @State private var tab: STab = .general
+    var onHeightChange: (CGFloat) -> Void = { _ in }
+    @State private var reportedHeight: CGFloat = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -67,8 +70,6 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 .padding(24)
 
-                Spacer(minLength: 0)
-
                 // ── Footer separator ────────────────────────────────
                 Divider()
                     .padding(.horizontal, 20)
@@ -88,8 +89,27 @@ struct SettingsView: View {
                 .padding(.bottom, 6)
             }
         }
-        .frame(width: 500, height: 320, alignment: .top)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(width: 500)
+        .background(GeometryReader { proxy in
+            Color.clear.preference(key: SettingsHeightKey.self, value: proxy.size.height)
+        })
+        .onPreferenceChange(SettingsHeightKey.self) { height in
+            guard abs(height - reportedHeight) > 0.5 else { return }
+            reportedHeight = height
+            onHeightChange(height)
+        }
+        .frame(maxHeight: .infinity, alignment: .top)
         .ignoresSafeArea()
+    }
+}
+
+// MARK: - Content height measurement
+
+private struct SettingsHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
     }
 }
 
@@ -140,6 +160,8 @@ private struct GeneralTab: View {
             GridRow {
                 Text(L("Open at Login"))
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+                    .fixedSize(horizontal: false, vertical: true)
                     .frame(width: kLabelW, alignment: .trailing)
                     .gridColumnAlignment(.trailing)
                 Toggle("", isOn: $openAtLogin)
@@ -148,10 +170,14 @@ private struct GeneralTab: View {
             }
             GridRow {
                 Text(L("Show Icon in Dock")).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+                    .fixedSize(horizontal: false, vertical: true)
                 Toggle("", isOn: $showDockIcon).toggleStyle(.checkbox).labelsHidden()
             }
             GridRow {
                 Text(L("Language")).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+                    .fixedSize(horizontal: false, vertical: true)
                 Picker("", selection: $language) {
                     ForEach(langs, id: \.self) { Text($0).tag($0) }
                 }
@@ -159,6 +185,8 @@ private struct GeneralTab: View {
             }
             GridRow {
                 Text(L("Appearance")).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+                    .fixedSize(horizontal: false, vertical: true)
                 Picker("", selection: $appearance) {
                     ForEach(modes, id: \.self) { mode in
                         Text(L(mode)).tag(mode)
@@ -191,6 +219,8 @@ private struct TimerTab: View {
             GridRow {
                 Text(L("Default Duration"))
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+                    .fixedSize(horizontal: false, vertical: true)
                     .frame(width: kLabelW, alignment: .trailing)
                     .gridColumnAlignment(.trailing)
                 Picker("", selection: $dur) {
@@ -201,14 +231,20 @@ private struct TimerTab: View {
             }
             GridRow {
                 Text(L("Warning Sound")).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+                    .fixedSize(horizontal: false, vertical: true)
                 Toggle(L("Play sound 60s before sleeping"), isOn: $warn).toggleStyle(.checkbox)
             }
             GridRow {
                 Text(L("Menu Bar")).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+                    .fixedSize(horizontal: false, vertical: true)
                 Toggle(L("Show countdown in Menu Bar"), isOn: $menuBar).toggleStyle(.checkbox)
             }
             GridRow {
                 Text(L("After start")).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+                    .fixedSize(horizontal: false, vertical: true)
                 Toggle(L("Close window"), isOn: $closeOnStart).toggleStyle(.checkbox)
             }
         }
@@ -222,104 +258,67 @@ private struct TimerTab: View {
 // MARK: - Shortcuts tab
 
 private struct ShortcutsTab: View {
-    @ObservedObject private var settings = SettingsManager.shared
-    @AppStorage("shortcutShowTimer")  private var scShow  = ""
-    @AppStorage("shortcutStartTimer") private var scStart = ""
-
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            if !settings.isAccessibilityTrusted {
-                AccessibilityBanner()
-            }
             Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 16) {
                 GridRow {
                     Text(L("Show Doze"))
                         .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.trailing)
+                        .fixedSize(horizontal: false, vertical: true)
                         .frame(width: kLabelW, alignment: .trailing)
                         .gridColumnAlignment(.trailing)
-                    Pill(shortcut: $scShow)
+                    Pill(name: .showDoze)
                         .gridColumnAlignment(.leading)
                 }
                 GridRow {
                     Text(L("Start Default Timer")).foregroundStyle(.secondary)
-                    Pill(shortcut: $scStart)
+                        .multilineTextAlignment(.trailing)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Pill(name: .startDefaultTimer)
                 }
                 GridRow {
                     Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
                     Text(L("Click a field and press a key combination to record."))
                         .font(.caption)
                         .foregroundStyle(.tertiary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        // Left edge aligns with the shortcut text inside the
+                        // Pill (inset by the Pill's 12 pt horizontal padding);
+                        // the hint may span the full control-column width,
+                        // not just the Pill's 210 pt.
+                        .padding(.leading, 12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
         }
-    }
-}
-
-// MARK: - Accessibility warning banner
-
-private struct AccessibilityBanner: View {
-    @ObservedObject private var settings = SettingsManager.shared
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 16))
-                .foregroundStyle(.orange)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(L("Global shortcuts require Accessibility permission."))
-                    .font(.system(size: 12, weight: .medium))
-                Text(L("Without it, shortcuts only work when Doze is the active app."))
-                    .font(.system(size: 11))
-                    .foregroundStyle(.secondary)
-                HStack(spacing: 8) {
-                    Button(L("Grant Permission")) {
-                        settings.requestAccessibilityPermission()
-                    }
-                    .controlSize(.small)
-                    Button(L("Open System Settings")) {
-                        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-                            NSWorkspace.shared.open(url)
-                        }
-                    }
-                    .controlSize(.small)
-                }
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(10)
-        .background(Color.orange.opacity(0.10))
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .strokeBorder(Color.orange.opacity(0.3), lineWidth: 0.5)
-        )
     }
 }
 
 // MARK: - Shortcut pill field
 
 private struct Pill: View {
-    @Binding var shortcut: String
+    let name: KeyboardShortcuts.Name
     @State private var recording = false
     @State private var eventMonitor: Any?
+    @State private var displayText = ""
 
     var body: some View {
         HStack(spacing: 6) {
             Group {
                 if recording {
                     Text(L("Type shortcut…")).italic().foregroundStyle(.tertiary)
-                } else if shortcut.isEmpty {
+                } else if displayText.isEmpty {
                     Text(L("None")).foregroundStyle(.tertiary)
                 } else {
-                    Text(shortcut).font(.system(.body, design: .monospaced)).fontWeight(.medium)
+                    Text(displayText).font(.system(.body, design: .monospaced)).fontWeight(.medium)
                 }
             }
             .animation(.easeInOut(duration: 0.15), value: recording)
             Spacer(minLength: 0)
-            if !shortcut.isEmpty && !recording {
+            if !displayText.isEmpty && !recording {
                 Button {
-                    withAnimation(.easeInOut(duration: 0.15)) { shortcut = "" }
-                    SettingsManager.shared.registerGlobalShortcuts()
+                    withAnimation(.easeInOut(duration: 0.15)) { clearShortcut() }
                 } label: {
                     Image(systemName: "xmark.circle.fill").font(.system(size: 13)).foregroundStyle(.secondary)
                 }
@@ -337,6 +336,7 @@ private struct Pill: View {
         ))
         .contentShape(Capsule())
         .onTapGesture { toggleRecording() }
+        .onAppear { refreshDisplay() }
         .onDisappear { stopRecording() }
     }
 
@@ -357,12 +357,11 @@ private struct Pill: View {
                 stopRecording()
                 return nil
             }
-            if let sc = SettingsManager.shortcutString(from: event) {
-                shortcut = sc
+            if let sc = KeyboardShortcuts.Shortcut(event: event),
+               SettingsManager.isAcceptableShortcut(modifiers: event.modifierFlags) {
                 withAnimation(.easeInOut(duration: 0.15)) { recording = false }
+                acceptShortcut(sc)
                 stopRecording()
-                SettingsManager.shared.registerGlobalShortcuts()
-                SettingsManager.shared.log("Shortcut recorded: \(sc)")
                 return nil
             }
             return event
@@ -371,6 +370,21 @@ private struct Pill: View {
 
     private func stopRecording() {
         if let m = eventMonitor { NSEvent.removeMonitor(m); eventMonitor = nil }
+    }
+
+    private func acceptShortcut(_ sc: KeyboardShortcuts.Shortcut) {
+        KeyboardShortcuts.setShortcut(sc, for: name)
+        refreshDisplay()
+        SettingsManager.shared.log("Shortcut recorded: \(sc.description)")
+    }
+
+    private func clearShortcut() {
+        KeyboardShortcuts.setShortcut(nil, for: name)
+        refreshDisplay()
+    }
+
+    private func refreshDisplay() {
+        displayText = KeyboardShortcuts.getShortcut(for: name)?.description ?? ""
     }
 }
 

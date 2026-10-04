@@ -13,6 +13,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
     let warningWindowManager = WarningWindowManager()
     private let settings = SettingsManager.shared
     private var cancellables = Set<AnyCancellable>()
+    private var settingsShowPending = false
+    private var settingsInitialHeightApplied = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         sleepManager.warningWindowManager = warningWindowManager
@@ -92,8 +94,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
             }
             .store(in: &cancellables)
 
-        // Register global shortcuts
-        settings.registerGlobalShortcuts()
+        // Register global shortcut handlers (KeyboardShortcuts package)
+        settings.registerShortcutHandlers()
 
         settings.log("App ready")
 
@@ -150,6 +152,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
 
+            // Placeholder size; the first SwiftUI height measurement replaces
+            // the height before the window becomes visible.
             let size = NSSize(width: 500, height: 320)
             let rect = NSRect(origin: .zero, size: size)
 
@@ -168,35 +172,89 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
 
             // Manual content view container (no contentViewController).
             let container = NSView(frame: rect)
-            container.translatesAutoresizingMaskIntoConstraints = true
-            container.autoresizesSubviews = false
 
-            // Hosting view with sizing negotiation disabled.
-            let hostingController = NSHostingController(rootView: SettingsView())
+            // Hosting view with sizing negotiation disabled; it follows the
+            // container's size via autoresizing.
+            let hostingController = NSHostingController(
+                rootView: SettingsView { [weak self] height in
+                    self?.settingsHeightChanged(height)
+                })
             hostingController.sizingOptions = []
             let hostingView = hostingController.view
-            hostingView.translatesAutoresizingMaskIntoConstraints = true
-            hostingView.frame = rect
+            hostingView.frame = container.bounds
+            hostingView.autoresizingMask = [.width, .height]
 
             container.addSubview(hostingView)
+
+            // Register the window before it enters the hierarchy so an early
+            // height callback is not dropped.
+            self.settingsWindow = window
+            self.settingsShowPending = true
+            self.settingsInitialHeightApplied = false
+
             window.contentView = container
-            window.contentView?.translatesAutoresizingMaskIntoConstraints = true
-            window.contentView?.autoresizesSubviews = false
 
             window.delegate = self
             window.center()
             window.isReleasedWhenClosed = false
             window.hidesOnDeactivate = false
             window.collectionBehavior = [.moveToActiveSpace, .managed]
-            self.settingsWindow = window
             self.settingsHostingController = hostingController
 
-            window.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
+            // Lay out while still hidden so SwiftUI reports the ideal height
+            // and the window is sized before it is shown (no visible jump).
+            container.layoutSubtreeIfNeeded()
 
-            settings.startAccessibilityPolling()
-            UserDefaults.standard.set(true, forKey: "settingsWindowOpen")
+            // Safety net: reveal even if no measurement arrives.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.revealPendingSettingsWindow()
+            }
         }
+    }
+
+    // MARK: - Settings window sizing
+
+    /// SwiftUI reported the ideal content height; resize the window so its
+    /// content height matches, keeping the top edge fixed.
+    private func settingsHeightChanged(_ contentHeight: CGFloat) {
+        guard contentHeight > 0, let window = settingsWindow else { return }
+        let contentRect = window.contentRect(forFrameRect: window.frame)
+        let chromeHeight = window.frame.height - contentRect.height
+        let newFrame = Self.topAnchoredFrame(current: window.frame,
+                                             newContentHeight: contentHeight,
+                                             chromeHeight: chromeHeight,
+                                             width: window.frame.width)
+        window.minSize = newFrame.size
+        window.maxSize = newFrame.size
+        if newFrame != window.frame {
+            let animate = window.isVisible && settingsInitialHeightApplied
+            window.setFrame(newFrame, display: true, animate: animate)
+        }
+        #if DEBUG
+        print("📐 Settings content height: \(Int(contentHeight)) pt (window frame \(Int(newFrame.height)) pt)")
+        #endif
+        settingsInitialHeightApplied = true
+        if settingsShowPending {
+            revealPendingSettingsWindow()
+        }
+    }
+
+    private func revealPendingSettingsWindow() {
+        guard settingsShowPending, let window = settingsWindow else { return }
+        settingsShowPending = false
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+
+        UserDefaults.standard.set(true, forKey: "settingsWindowOpen")
+    }
+
+    /// Returns a frame of the given width and `newContentHeight + chromeHeight`
+    /// total height whose top edge (maxY) matches `current`'s.
+    static func topAnchoredFrame(current: NSRect, newContentHeight: CGFloat,
+                                 chromeHeight: CGFloat, width: CGFloat) -> NSRect {
+        let newHeight = newContentHeight + chromeHeight
+        return NSRect(x: current.minX, y: current.maxY - newHeight,
+                      width: width, height: newHeight)
     }
 
     func windowWillClose(_ notification: Notification) {
@@ -206,7 +264,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         settings.log("Settings window closing (isActive=\(NSApp.isActive), keyWindow=\(NSApp.keyWindow?.title ?? "nil"))")
         settingsWindow = nil
         settingsHostingController = nil
-        settings.stopAccessibilityPolling()
         UserDefaults.standard.set(false, forKey: "settingsWindowOpen")
     }
 

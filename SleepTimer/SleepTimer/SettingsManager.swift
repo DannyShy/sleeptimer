@@ -3,7 +3,7 @@ import AppKit
 import SwiftUI
 import ServiceManagement
 import UniformTypeIdentifiers
-import ApplicationServices
+import KeyboardShortcuts
 
 final class SettingsManager: ObservableObject {
     static let shared = SettingsManager()
@@ -21,16 +21,6 @@ final class SettingsManager: ObservableObject {
     var onTogglePopover: (() -> Void)?
     var onStartDefaultTimer: (() -> Void)?
     var onAppearanceChanged: ((NSAppearance?) -> Void)?
-
-    // MARK: - Accessibility
-    @Published var isAccessibilityTrusted: Bool = AXIsProcessTrusted()
-    private var accessibilityPollTimer: Timer?
-
-    // MARK: - Hotkey monitors
-    private var globalShowMonitor: Any?
-    private var globalStartMonitor: Any?
-    private var localShowMonitor: Any?
-    private var localStartMonitor: Any?
 
     // MARK: - App info (from Info.plist)
     var appVersion: String {
@@ -54,10 +44,11 @@ final class SettingsManager: ObservableObject {
             "defaultDuration": "30 min",
             "warningSoundEnabled": true,
             "showCountdownMenuBar": false,
-            "closePopoverOnStart": true,
-            "shortcutShowTimer": "",
-            "shortcutStartTimer": ""
+            "closePopoverOnStart": true
         ])
+        if Self.migrateLegacyShortcuts() {
+            log("Legacy shortcuts cleared — please re-record")
+        }
         log("App launched")
     }
 
@@ -205,6 +196,7 @@ final class SettingsManager: ObservableObject {
 
     /// Generates a diagnostic report and composes an email with the file attached.
     /// Falls back to NSSavePanel + mailto if the mail service is unavailable.
+    @MainActor
     func sendFeedback() {
         let diagnostics = generateDiagnostics()
         let tempURL = FileManager.default.temporaryDirectory
@@ -252,6 +244,7 @@ final class SettingsManager: ObservableObject {
         }
     }
 
+    @MainActor
     private func generateDiagnostics() -> String {
         let osVersion = ProcessInfo.processInfo.operatingSystemVersionString
         let hwModel = hardwareModel()
@@ -279,13 +272,14 @@ final class SettingsManager: ObservableObject {
         let prefKeys = [
             "openAtLogin", "showDockIcon", "appLanguage", "appAppearance",
             "defaultDuration", "warningSoundEnabled", "showCountdownMenuBar",
-            "closePopoverOnStart",
-            "shortcutShowTimer", "shortcutStartTimer", "lastUsedDuration"
+            "closePopoverOnStart", "lastUsedDuration"
         ]
         for key in prefKeys {
             let value = defaults.object(forKey: key)
             lines.append("\(key): \(value ?? "nil")")
         }
+        lines.append("shortcutShowDoze: \(KeyboardShortcuts.getShortcut(for: .showDoze)?.description ?? "none")")
+        lines.append("shortcutStartDefaultTimer: \(KeyboardShortcuts.getShortcut(for: .startDefaultTimer)?.description ?? "none")")
         lines.append("")
 
         // Log entries
@@ -307,112 +301,63 @@ final class SettingsManager: ObservableObject {
         return String(cString: model)
     }
 
-    // MARK: - Global Shortcuts
+    // MARK: - Global Shortcuts (KeyboardShortcuts package)
 
-    // MARK: - Accessibility Permission
-
-    func isAccessibilityTrustedStatus() -> Bool {
-        return AXIsProcessTrusted()
-    }
-
-    @discardableResult
-    func requestAccessibilityPermission() -> Bool {
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-        let trusted = AXIsProcessTrustedWithOptions(options)
-        isAccessibilityTrusted = trusted
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-            NSWorkspace.shared.open(url)
+    /// Registers the global shortcut handlers. Called once at app launch.
+    /// The Carbon hotkeys behind KeyboardShortcuts fire system-wide with no
+    /// permission, even while another app is frontmost.
+    @MainActor func registerShortcutHandlers() {
+        KeyboardShortcuts.onKeyUp(for: .showDoze) { [weak self] in
+            DispatchQueue.main.async { self?.onTogglePopover?() }
         }
-        return trusted
-    }
-
-    func startAccessibilityPolling() {
-        stopAccessibilityPolling()
-        accessibilityPollTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            let trusted = AXIsProcessTrusted()
-            if trusted != self.isAccessibilityTrusted {
-                DispatchQueue.main.async {
-                    self.isAccessibilityTrusted = trusted
-                    if trusted { self.registerGlobalShortcuts() }
-                }
-            }
+        KeyboardShortcuts.onKeyUp(for: .startDefaultTimer) { [weak self] in
+            DispatchQueue.main.async { self?.onStartDefaultTimer?() }
         }
     }
 
-    func stopAccessibilityPolling() {
-        accessibilityPollTimer?.invalidate()
-        accessibilityPollTimer = nil
+    /// Recording validation: require Command or Control. Option-only and
+    /// Shift-only combinations are rejected (ambiguous with typing).
+    static func isAcceptableShortcut(modifiers: NSEvent.ModifierFlags) -> Bool {
+        let mods = modifiers.intersection(.deviceIndependentFlagsMask)
+        return mods.contains(.command) || mods.contains(.control)
     }
 
-    // MARK: - Global Shortcuts
-
-    func registerGlobalShortcuts() {
-        unregisterGlobalShortcuts()
-        isAccessibilityTrusted = AXIsProcessTrusted()
-        let show = UserDefaults.standard.string(forKey: "shortcutShowTimer") ?? ""
-        let start = UserDefaults.standard.string(forKey: "shortcutStartTimer") ?? ""
-
-        if !show.isEmpty {
-            // Global monitor (app in background)
-            globalShowMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-                if self?.matchesShortcut(event, shortcut: show) == true {
-                    DispatchQueue.main.async { self?.onTogglePopover?() }
-                }
-            }
-            // Local monitor (app in foreground)
-            localShowMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-                if self?.matchesShortcut(event, shortcut: show) == true {
-                    DispatchQueue.main.async { self?.onTogglePopover?() }
-                    return nil
-                }
-                return event
-            }
+    /// Removes the legacy string-based shortcut preferences (NSEvent-monitor
+    /// era). Returns true when something was actually cleared.
+    static func migrateLegacyShortcuts() -> Bool {
+        let defaults = UserDefaults.standard
+        let legacyKeys = ["shortcutShowTimer", "shortcutStartTimer"]
+        guard legacyKeys.contains(where: { !(defaults.string(forKey: $0) ?? "").isEmpty }) else {
+            return false
         }
-        if !start.isEmpty {
-            // Global monitor (app in background)
-            globalStartMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-                if self?.matchesShortcut(event, shortcut: start) == true {
-                    DispatchQueue.main.async { self?.onStartDefaultTimer?() }
-                }
-            }
-            // Local monitor (app in foreground)
-            localStartMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-                if self?.matchesShortcut(event, shortcut: start) == true {
-                    DispatchQueue.main.async { self?.onStartDefaultTimer?() }
-                    return nil
-                }
-                return event
-            }
-        }
-        if !show.isEmpty || !start.isEmpty { log("Shortcuts registered (global + local)") }
+        for key in legacyKeys { defaults.removeObject(forKey: key) }
+        return true
     }
 
-    func unregisterGlobalShortcuts() {
-        if let m = globalShowMonitor { NSEvent.removeMonitor(m); globalShowMonitor = nil }
-        if let m = globalStartMonitor { NSEvent.removeMonitor(m); globalStartMonitor = nil }
-        if let m = localShowMonitor { NSEvent.removeMonitor(m); localShowMonitor = nil }
-        if let m = localStartMonitor { NSEvent.removeMonitor(m); localStartMonitor = nil }
+    /// Key parts of the built-in default shortcuts, exposed for unit tests
+    /// (the tests target cannot import KeyboardShortcuts, so it asserts
+    /// against these plain Carbon keycode / modifier values).
+    static var defaultShowDozeShortcutInfo: (carbonKeyCode: Int, modifiers: NSEvent.ModifierFlags)? {
+        KeyboardShortcuts.Name.showDoze.initialShortcut.map { ($0.carbonKeyCode, $0.modifiers) }
     }
 
-    private func matchesShortcut(_ event: NSEvent, shortcut: String) -> Bool {
-        guard let built = Self.shortcutString(from: event) else { return false }
-        return built == shortcut
+    static var defaultStartDefaultTimerShortcutInfo: (carbonKeyCode: Int, modifiers: NSEvent.ModifierFlags)? {
+        KeyboardShortcuts.Name.startDefaultTimer.initialShortcut.map { ($0.carbonKeyCode, $0.modifiers) }
     }
+}
 
-    static func shortcutString(from event: NSEvent) -> String? {
-        guard let chars = event.charactersIgnoringModifiers?.uppercased(),
-              !chars.isEmpty else { return nil }
-        let mods = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-        guard mods.contains(.command) || mods.contains(.option) || mods.contains(.control) else {
-            return nil
-        }
-        var parts: [String] = []
-        if mods.contains(.control) { parts.append("⌃") }
-        if mods.contains(.option)  { parts.append("⌥") }
-        if mods.contains(.shift)   { parts.append("⇧") }
-        if mods.contains(.command) { parts.append("⌘") }
-        parts.append(chars)
-        return parts.joined()
-    }
+// MARK: - Shortcut names
+
+extension KeyboardShortcuts.Name {
+    // Built-in defaults (⌃⌥⌘D / ⌃⌥⌘S). KeyboardShortcuts 3.1.0 persists the
+    // default on first access and stores cleared shortcuts as Bool `false`,
+    // so clearing survives restarts without resurrecting these defaults.
+    static let showDoze = Self(
+        "showDoze",
+        initial: .init(.d, modifiers: [.control, .option, .command])
+    )
+    static let startDefaultTimer = Self(
+        "startDefaultTimer",
+        initial: .init(.s, modifiers: [.control, .option, .command])
+    )
 }
