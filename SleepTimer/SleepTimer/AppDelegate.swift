@@ -94,6 +94,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
             }
             .store(in: &cancellables)
 
+        // Keep the settings window title in sync with the in-app language
+        // (the NSWindow title is not re-evaluated by SwiftUI).
+        settings.$appLanguage
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.settingsWindow?.title = L("Doze Settings")
+            }
+            .store(in: &cancellables)
+
         // Register global shortcut handlers (KeyboardShortcuts package)
         settings.registerShortcutHandlers()
 
@@ -163,7 +172,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
                 styleMask: [.titled, .closable, .fullSizeContentView],
                 backing: .buffered, defer: false
             )
-            window.title = "Doze Settings"
+            window.title = L("Doze Settings")
             window.titleVisibility = .hidden
             window.titlebarAppearsTransparent = true
             window.isMovableByWindowBackground = true

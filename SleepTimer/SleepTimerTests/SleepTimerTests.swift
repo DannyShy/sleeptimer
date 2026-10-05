@@ -39,11 +39,6 @@ final class SleepManagerTests: XCTestCase {
         XCTAssertFalse(sut.isTimerActive)
     }
 
-    func testStartTimerSetsStatusMessage() {
-        sut.startTimer(duration: 1800)
-        XCTAssertEqual(sut.timerStatusMessage, "Timer started for 30 minutes")
-    }
-
     // MARK: - cancelTimer
 
     func testCancelTimerResetsState() {
@@ -52,7 +47,6 @@ final class SleepManagerTests: XCTestCase {
         XCTAssertFalse(sut.isTimerActive)
         XCTAssertEqual(sut.remainingTime, 0)
         XCTAssertFalse(sut.showWarningDialog)
-        XCTAssertEqual(sut.timerStatusMessage, "Timer cancelled")
     }
 
     func testCancelTimerWhenNotActiveIsSafe() {
@@ -69,7 +63,6 @@ final class SleepManagerTests: XCTestCase {
         sut.snoozeTimer()
         XCTAssertEqual(sut.selectedDuration, before + 300)
         XCTAssertFalse(sut.showWarningDialog)
-        XCTAssertEqual(sut.timerStatusMessage, "Timer snoozed by 5 minutes")
     }
 
     func testSnoozeWhenInactiveDoesNothing() {
@@ -182,8 +175,18 @@ final class SettingsManagerTests: XCTestCase {
     }
 
     func testVersionStringFormat() {
+        UserDefaults.standard.set("English", forKey: "appLanguage")
         let version = SettingsManager.shared.versionString
         XCTAssertTrue(version.hasPrefix("Version "), "Got: \(version)")
+        XCTAssertFalse(version.contains("Build"), "Got: \(version)")
+    }
+
+    func testVersionStringFormatSlovak() {
+        UserDefaults.standard.set("Slovak", forKey: "appLanguage")
+        defer { UserDefaults.standard.set("English", forKey: "appLanguage") }
+        let version = SettingsManager.shared.versionString
+        XCTAssertTrue(version.hasPrefix("Verzia "), "Got: \(version)")
+        XCTAssertFalse(version.contains("Build"), "Got: \(version)")
     }
 
     func testLogCap() {

@@ -19,6 +19,13 @@ private enum STab: String, CaseIterable, Identifiable {
 
 private let kLabelW: CGFloat = 160
 
+// Display-only native language names; the stored values ("English",
+// "Slovak", …) and the appLanguage setting remain unchanged.
+private let languageDisplayNames: [String: String] = [
+    "English": "English", "Slovak": "Slovenčina", "German": "Deutsch",
+    "French": "Français", "Spanish": "Español"
+]
+
 // MARK: - SettingsView
 
 struct SettingsView: View {
@@ -179,7 +186,7 @@ private struct GeneralTab: View {
                     .multilineTextAlignment(.trailing)
                     .fixedSize(horizontal: false, vertical: true)
                 Picker("", selection: $language) {
-                    ForEach(langs, id: \.self) { Text($0).tag($0) }
+                    ForEach(langs, id: \.self) { Text(languageDisplayNames[$0] ?? $0).tag($0) }
                 }
                 .labelsHidden().frame(width: 150)
             }

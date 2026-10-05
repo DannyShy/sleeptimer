@@ -30,7 +30,7 @@ final class SettingsManager: ObservableObject {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
     }
     var versionString: String {
-        "Version \(appVersion) (Build \(buildNumber))"
+        "\(L("Version")) \(appVersion) (\(buildNumber))"
     }
 
     // MARK: - Init
@@ -210,7 +210,7 @@ final class SettingsManager: ObservableObject {
         }
 
         let subject = "Doze \(appVersion) — Feedback"
-        let body = "Please describe your issue or suggestion below:\n\n\n---\nDiagnostic report is attached automatically."
+        let body = "\(L("Please describe your issue or suggestion below:"))\n\n\n---\n\(L("Diagnostic report is attached automatically."))"
 
         // Try NSSharingService (auto-attaches the file)
         if let emailService = NSSharingService(named: .composeEmail) {
@@ -235,7 +235,7 @@ final class SettingsManager: ObservableObject {
                 }
 
                 let mailSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-                let mailBody = "Please attach the diagnostics file from your Desktop and describe your issue below."
+                let mailBody = L("Please attach the diagnostics file you just saved and describe your issue below.")
                     .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
                 if let mailto = URL(string: "mailto:doze.support@glitcher.studio?subject=\(mailSubject)&body=\(mailBody)") {
                     NSWorkspace.shared.open(mailto)

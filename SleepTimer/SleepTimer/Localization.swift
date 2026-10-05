@@ -158,6 +158,30 @@ let strings: [String: [String: String]] = [
         "sk": "Exportovať záznamy", "de": "Protokolle exportieren",
         "fr": "Exporter les journaux", "es": "Exportar registros"
     ],
+    "Version": [
+        "sk": "Verzia", "de": "Version",
+        "fr": "Version", "es": "Versión"
+    ],
+
+    // ── SettingsManager (Send Feedback) ─────────────────────────
+    "Please describe your issue or suggestion below:": [
+        "sk": "Popíšte, prosím, váš problém alebo návrh nižšie:",
+        "de": "Bitte beschreiben Sie Ihr Problem oder Ihren Vorschlag unten:",
+        "fr": "Veuillez décrire votre problème ou suggestion ci-dessous :",
+        "es": "Describa su problema o sugerencia a continuación:"
+    ],
+    "Diagnostic report is attached automatically.": [
+        "sk": "Diagnostická správa je priložená automaticky.",
+        "de": "Der Diagnosebericht wird automatisch angehängt.",
+        "fr": "Le rapport de diagnostic est joint automatiquement.",
+        "es": "El informe de diagnóstico se adjunta automáticamente."
+    ],
+    "Please attach the diagnostics file you just saved and describe your issue below.": [
+        "sk": "Priložte, prosím, práve uložený diagnostický súbor a nižšie popíšte váš problém.",
+        "de": "Bitte hängen Sie die soeben gespeicherte Diagnosedatei an und beschreiben Sie Ihr Problem unten.",
+        "fr": "Veuillez joindre le fichier de diagnostic que vous venez d’enregistrer et décrire votre problème ci-dessous.",
+        "es": "Adjunte el archivo de diagnóstico que acaba de guardar y describa su problema a continuación."
+    ],
 
     // ── CountdownWarningDialog ──────────────────────────────────
     "Mac will sleep soon": [

@@ -39,6 +39,7 @@ targets:
     settings:
       BUNDLE_LOADER: "$(TEST_HOST)"
       TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Doze.app/Contents/MacOS/Doze"
+      GENERATE_INFOPLIST_FILE: YES
       PRODUCT_BUNDLE_IDENTIFIER: com.glitcher.doze.tests
       DEVELOPMENT_TEAM: 47Z9BFSWTD
       CODE_SIGN_STYLE: Automatic

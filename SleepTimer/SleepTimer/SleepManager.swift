@@ -6,7 +6,6 @@ class SleepManager: ObservableObject {
     @Published var isTimerActive = false
     @Published var remainingTime: TimeInterval = 0
     @Published var selectedDuration: TimeInterval = 1800
-    @Published var timerStatusMessage: String = ""
     @Published var showWarningDialog = false
     
     private var timer: Timer?
@@ -26,7 +25,6 @@ class SleepManager: ObservableObject {
         isTimerActive = true
         
         let minutes = Int(duration) / 60
-        timerStatusMessage = "Timer started for \(minutes) minutes"
         SettingsManager.shared.saveLastUsedDuration(duration)
         SettingsManager.shared.log("Timer started: \(minutes) min")
         
@@ -46,7 +44,6 @@ class SleepManager: ObservableObject {
         showWarningDialog = false
         warningShown = false
         warningWindowManager?.hideWarningDialog()
-        timerStatusMessage = "Timer snoozed by 5 minutes"
         SettingsManager.shared.log("Timer snoozed +5 min")
     }
 
@@ -59,7 +56,6 @@ class SleepManager: ObservableObject {
         showWarningDialog = false
         warningShown = false
         warningWindowManager?.hideWarningDialog()
-        timerStatusMessage = "Timer cancelled"
         SettingsManager.shared.log("Timer cancelled")
     }
     
@@ -70,7 +66,6 @@ class SleepManager: ObservableObject {
         remainingTime = max(0, endTime.timeIntervalSince(now))
         
         if remainingTime <= 0 {
-            timerStatusMessage = "Timer complete, putting Mac to sleep"
             showWarningDialog = false
             warningWindowManager?.hideWarningDialog()
             cancelTimer()
@@ -82,9 +77,6 @@ class SleepManager: ObservableObject {
             if UserDefaults.standard.bool(forKey: "warningSoundEnabled") {
                 SettingsManager.shared.playWarningSound()
             }
-            timerStatusMessage = "Warning: Mac will sleep in 1 minute"
-        } else {
-            timerStatusMessage = "Time remaining: \(formattedTime())"
         }
     }
     
