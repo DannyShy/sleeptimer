@@ -133,11 +133,13 @@ private struct STabButton: View {
             VStack(spacing: 3) {
                 Image(systemName: tab.icon)
                     .font(.system(size: 18, weight: active ? .semibold : .regular))
+                    .frame(width: 28, height: 22)
                 Text(tab.label)
                     .font(.system(size: 10, weight: active ? .medium : .regular))
+                    .lineLimit(1)
             }
             .foregroundStyle(active ? Color.white : Color.secondary)
-            .frame(width: 84)
+            .frame(width: 84, height: 38)
             .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 9, style: .continuous)
