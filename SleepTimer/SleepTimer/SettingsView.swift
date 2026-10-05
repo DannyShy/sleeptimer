@@ -188,7 +188,8 @@ private struct GeneralTab: View {
                 Picker("", selection: $language) {
                     ForEach(langs, id: \.self) { Text(languageDisplayNames[$0] ?? $0).tag($0) }
                 }
-                .labelsHidden().frame(width: 150)
+                .labelsHidden().frame(width: 150, alignment: .leading)
+                .gridColumnAlignment(.leading)
             }
             GridRow {
                 Text(L("Appearance")).foregroundStyle(.secondary)
@@ -233,7 +234,7 @@ private struct TimerTab: View {
                 Picker("", selection: $dur) {
                     ForEach(durations, id: \.self) { Text(L($0)).tag($0) }
                 }
-                .labelsHidden().frame(width: 150)
+                .labelsHidden().frame(width: 150, alignment: .leading)
                 .gridColumnAlignment(.leading)
             }
             GridRow {
