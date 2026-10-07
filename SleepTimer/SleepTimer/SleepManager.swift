@@ -2,7 +2,9 @@ import Foundation
 import SwiftUI
 import IOKit.pwr_mgt
 
-class SleepManager: ObservableObject {
+// @unchecked Sendable: state is confined to the main thread (Timer, UI-adjacent
+// fields). Required so App Intents can hold the manager via @Dependency.
+class SleepManager: ObservableObject, @unchecked Sendable {
     @Published var isTimerActive = false
     @Published var remainingTime: TimeInterval = 0
     @Published var selectedDuration: TimeInterval = 1800

@@ -397,3 +397,32 @@ final class SettingsWindowGeometryTests: XCTestCase {
         XCTAssertEqual(result.minX, 100, accuracy: 0.001)
     }
 }
+
+// MARK: - Sleep Intent Logic Tests
+
+final class SleepIntentLogicTests: XCTestCase {
+
+    func testResolveDurationNilReturnsDefault() {
+        XCTAssertEqual(SleepTimerLogic.resolveDuration(minutes: nil, defaultSeconds: 1800), 1800)
+    }
+
+    func testResolveDuration45MinutesReturns2700() {
+        XCTAssertEqual(SleepTimerLogic.resolveDuration(minutes: 45, defaultSeconds: 1800), 2700)
+    }
+
+    func testRemainingMinutesRoundedUpNotActiveReturnsZero() {
+        XCTAssertEqual(SleepTimerLogic.remainingMinutesRoundedUp(remaining: 100, isActive: false), 0)
+    }
+
+    func testRemainingMinutesRoundedUp61SecondsReturnsTwo() {
+        XCTAssertEqual(SleepTimerLogic.remainingMinutesRoundedUp(remaining: 61, isActive: true), 2)
+    }
+
+    func testRemainingMinutesRoundedUp60SecondsReturnsOne() {
+        XCTAssertEqual(SleepTimerLogic.remainingMinutesRoundedUp(remaining: 60, isActive: true), 1)
+    }
+
+    func testRemainingMinutesRoundedUp1SecondReturnsOne() {
+        XCTAssertEqual(SleepTimerLogic.remainingMinutesRoundedUp(remaining: 1, isActive: true), 1)
+    }
+}

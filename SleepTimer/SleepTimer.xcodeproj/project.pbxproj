@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		00C9D61EC0B1D2141F50A995 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EBE05F314E3D0B1049188067 /* Assets.xcassets */; };
 		0343DAF436638C77B6489991 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 41D93530EB03C1FC57581AB3 /* PrivacyInfo.xcprivacy */; };
+		1A999A39804C09DB39CAECC7 /* SleepIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4DA338ED78B33517E0FB10C /* SleepIntents.swift */; };
 		2845D6A88CF21AB52CEF7FF5 /* SleepManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 685DE5D924C9D24186AB9F69 /* SleepManager.swift */; };
 		289F5BCFE075B6A3F61E9BFF /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2219BEEA7EB887F88DCCB963 /* VisualEffectView.swift */; };
 		348F2B9D09A1BDE984A81475 /* CountdownWarningDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BFC38AAB4F029EEB28C08F /* CountdownWarningDialog.swift */; };
@@ -19,6 +20,7 @@
 		894FB2C9FF751B2E16D3944F /* SleepTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A269E96EFD25551A944E70 /* SleepTimerApp.swift */; };
 		8A172A88FF403F10B3F75595 /* SleepTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4086FCFBFEF24AE65076EB3E /* SleepTimerTests.swift */; };
 		B05E9BEFDA6249C0B66A40F0 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE65FD8461D4EC30D6B713 /* Localization.swift */; };
+		BA6C0668E152FA91AD3C8B16 /* DozeShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458976E5789F411DDD64CA81 /* DozeShortcuts.swift */; };
 		BF755A3C3746E5C6AED57E12 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B327B40CA474DE2B6DBD50E8 /* SettingsView.swift */; };
 		C6A85D06AB69955A758B91D7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B8ACC872315C84BAFBB5F66 /* AppDelegate.swift */; };
 		C89434613E75CC9D72698E88 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24C525AE8616B2C879BC905 /* ColorExtension.swift */; };
@@ -41,6 +43,7 @@
 		2FBE99D0B3CF78BE186AC6AD /* SleepTimerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SleepTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4086FCFBFEF24AE65076EB3E /* SleepTimerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerTests.swift; sourceTree = "<group>"; };
 		41D93530EB03C1FC57581AB3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		458976E5789F411DDD64CA81 /* DozeShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DozeShortcuts.swift; sourceTree = "<group>"; };
 		52A269E96EFD25551A944E70 /* SleepTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerApp.swift; sourceTree = "<group>"; };
 		53BFC38AAB4F029EEB28C08F /* CountdownWarningDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownWarningDialog.swift; sourceTree = "<group>"; };
 		685DE5D924C9D24186AB9F69 /* SleepManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepManager.swift; sourceTree = "<group>"; };
@@ -52,6 +55,7 @@
 		B327B40CA474DE2B6DBD50E8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C388BE85775F4FF10422BF42 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		D19D46FFB58B6A9D8ECE51EA /* SleepTimer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SleepTimer.entitlements; sourceTree = "<group>"; };
+		E4DA338ED78B33517E0FB10C /* SleepIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepIntents.swift; sourceTree = "<group>"; };
 		EBE05F314E3D0B1049188067 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F4C84259F963DAF3D21F9800 /* SleepTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SleepTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F92A7A89637B46B796584694 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -77,11 +81,13 @@
 				A24C525AE8616B2C879BC905 /* ColorExtension.swift */,
 				2C30E20B448B595F84356C08 /* ContentView.swift */,
 				53BFC38AAB4F029EEB28C08F /* CountdownWarningDialog.swift */,
+				458976E5789F411DDD64CA81 /* DozeShortcuts.swift */,
 				F92A7A89637B46B796584694 /* Info.plist */,
 				6FEE65FD8461D4EC30D6B713 /* Localization.swift */,
 				41D93530EB03C1FC57581AB3 /* PrivacyInfo.xcprivacy */,
 				C388BE85775F4FF10422BF42 /* SettingsManager.swift */,
 				B327B40CA474DE2B6DBD50E8 /* SettingsView.swift */,
+				E4DA338ED78B33517E0FB10C /* SleepIntents.swift */,
 				685DE5D924C9D24186AB9F69 /* SleepManager.swift */,
 				D19D46FFB58B6A9D8ECE51EA /* SleepTimer.entitlements */,
 				52A269E96EFD25551A944E70 /* SleepTimerApp.swift */,
@@ -239,9 +245,11 @@
 				C89434613E75CC9D72698E88 /* ColorExtension.swift in Sources */,
 				69C14C7F23790D6DBB696A7F /* ContentView.swift in Sources */,
 				348F2B9D09A1BDE984A81475 /* CountdownWarningDialog.swift in Sources */,
+				BA6C0668E152FA91AD3C8B16 /* DozeShortcuts.swift in Sources */,
 				B05E9BEFDA6249C0B66A40F0 /* Localization.swift in Sources */,
 				43D808C94154BC1B6DBC1D1B /* SettingsManager.swift in Sources */,
 				BF755A3C3746E5C6AED57E12 /* SettingsView.swift in Sources */,
+				1A999A39804C09DB39CAECC7 /* SleepIntents.swift in Sources */,
 				2845D6A88CF21AB52CEF7FF5 /* SleepManager.swift in Sources */,
 				894FB2C9FF751B2E16D3944F /* SleepTimerApp.swift in Sources */,
 				289F5BCFE075B6A3F61E9BFF /* VisualEffectView.swift in Sources */,

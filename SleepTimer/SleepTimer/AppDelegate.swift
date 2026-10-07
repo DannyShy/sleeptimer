@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import Combine
+import AppIntents
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowDelegate {
 
@@ -15,6 +16,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
     private var cancellables = Set<AnyCancellable>()
     private var settingsShowPending = false
     private var settingsInitialHeightApplied = false
+
+    override init() {
+        super.init()
+        // Register the app's SleepManager for App Intents (Shortcuts) as early
+        // as possible, so a cold-start intent finds it before perform() runs.
+        // add(dependency:) takes an @autoclosure provider; capture the manager
+        // itself so only the Sendable SleepManager is retained.
+        let sleepManager = self.sleepManager
+        AppDependencyManager.shared.add(dependency: sleepManager)
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         sleepManager.warningWindowManager = warningWindowManager
@@ -105,6 +116,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
 
         // Register global shortcut handlers (KeyboardShortcuts package)
         settings.registerShortcutHandlers()
+
+        // Publish/refresh App Shortcuts (Shortcuts app, Siri, Spotlight)
+        DozeShortcuts.updateAppShortcutParameters()
 
         settings.log("App ready")
 
