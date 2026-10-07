@@ -306,6 +306,14 @@ final class LocalizationTests: XCTestCase {
         }
     }
 
+    func testBundleLocalizations() {
+        let localizations = Set(Bundle.main.localizations)
+        for code in ["sk", "de", "fr", "es"] {
+            XCTAssertTrue(localizations.contains(code),
+                          "Bundle is missing localization: \(code)")
+        }
+    }
+
     override func tearDown() {
         UserDefaults.standard.set("English", forKey: "appLanguage")
         super.tearDown()
@@ -424,5 +432,83 @@ final class SleepIntentLogicTests: XCTestCase {
 
     func testRemainingMinutesRoundedUp1SecondReturnsOne() {
         XCTAssertEqual(SleepTimerLogic.remainingMinutesRoundedUp(remaining: 1, isActive: true), 1)
+    }
+}
+
+// MARK: - Dialog Localization Tests
+
+final class DialogLocalizationTests: XCTestCase {
+
+    private func languageBundle(_ code: String) -> Bundle {
+        let path = Bundle.main.path(forResource: code, ofType: "lproj")!
+        return Bundle(path: path)!
+    }
+
+    /// Reads the plural variant strings from the compiled Localizable.stringsdict in
+    /// the language's lproj, bypassing runtime plural-rule selection (which follows
+    /// the process language, not the lproj the strings were resolved from).
+    private func pluralVariants(language: String, key: String) throws -> [String: String] {
+        let path = Bundle.main.path(forResource: language, ofType: "lproj")!
+            .appending("/Localizable.stringsdict")
+        let data = try Data(contentsOf: URL(fileURLWithPath: path))
+        let plist = try PropertyListSerialization.propertyList(from: data, format: nil)
+        let entry = try XCTUnwrap((plist as? [String: Any])?[key] as? [String: Any])
+        let variants = try XCTUnwrap(entry["value"] as? [String: Any])
+        var result: [String: String] = [:]
+        let categories: Set<String> = ["zero", "one", "two", "few", "many", "other"]
+        for (category, value) in variants where categories.contains(category) {
+            result[category] = value as? String
+        }
+        return result
+    }
+
+    func testStartedDialogSlovak() {
+        let bundle = languageBundle("sk")
+        XCTAssertEqual(
+            SleepTimerLogic.startedDialog(sleepAt: "21:52", bundle: bundle),
+            "Časovač spustený. Mac sa uspí o 21:52.")
+    }
+
+    func testRemainingDialogSlovakPlurals() throws {
+        // Runtime checks use values whose Slovak and English plural categories agree
+        // (1 -> one, 5 -> other), because plural-rule selection follows the process
+        // language, not the sub-bundle. The "few" form (2-4) is asserted directly
+        // against the compiled stringsdict.
+        let bundle = languageBundle("sk")
+        XCTAssertEqual(SleepTimerLogic.remainingDialog(minutes: 1, bundle: bundle), "Zostáva 1 minúta.")
+        XCTAssertEqual(SleepTimerLogic.remainingDialog(minutes: 5, bundle: bundle), "Zostáva 5 minút.")
+        let variants = try pluralVariants(language: "sk", key: "%lld minutes remaining.")
+        XCTAssertEqual(variants["one"], "Zostáva 1 minúta.")
+        XCTAssertEqual(variants["few"], "Zostávajú %lld minúty.")
+        XCTAssertEqual(variants["other"], "Zostáva %lld minút.")
+    }
+
+    func testAlreadyRunningDialogSlovak() throws {
+        let bundle = languageBundle("sk")
+        XCTAssertEqual(
+            SleepTimerLogic.alreadyRunningDialog(minutes: 5, bundle: bundle),
+            "Časovač už beží. Zostáva 5 minút.")
+        let variants = try pluralVariants(
+            language: "sk",
+            key: "A sleep timer is already running. %lld minutes remaining.")
+        XCTAssertEqual(variants["few"], "Časovač už beží. Zostávajú %lld minúty.")
+    }
+
+    func testCancelledAndNoTimerDialogSlovak() {
+        let bundle = languageBundle("sk")
+        XCTAssertEqual(SleepTimerLogic.cancelledDialog(bundle: bundle), "Časovač zrušený.")
+        XCTAssertEqual(SleepTimerLogic.noTimerDialog(bundle: bundle), "Žiadny časovač nebeží.")
+    }
+
+    func testRemainingDialogGermanPlurals() {
+        let bundle = languageBundle("de")
+        XCTAssertEqual(SleepTimerLogic.remainingDialog(minutes: 1, bundle: bundle), "Noch 1 Minute.")
+        XCTAssertEqual(SleepTimerLogic.remainingDialog(minutes: 2, bundle: bundle), "Noch 2 Minuten.")
+    }
+
+    func testRemainingDialogEnglishPlurals() {
+        let bundle = languageBundle("en")
+        XCTAssertEqual(SleepTimerLogic.remainingDialog(minutes: 1, bundle: bundle), "1 minute remaining.")
+        XCTAssertEqual(SleepTimerLogic.remainingDialog(minutes: 5, bundle: bundle), "5 minutes remaining.")
     }
 }

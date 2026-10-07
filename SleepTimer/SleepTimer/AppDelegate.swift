@@ -122,12 +122,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
 
         settings.log("App ready")
 
-        // If macOS terminated us (e.g. TCC accessibility toggle) while
-        // the settings window was open, restore it on relaunch.
-        if UserDefaults.standard.bool(forKey: "settingsWindowOpen") {
-            settings.log("Restoring settings window after relaunch")
-            openSettings()
-        }
+        // One-time cleanup of the obsolete settings-window restore flag.
+        UserDefaults.standard.removeObject(forKey: "settingsWindowOpen")
     }
 
     // MARK: - Menu bar countdown
@@ -267,8 +263,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         settingsShowPending = false
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
-
-        UserDefaults.standard.set(true, forKey: "settingsWindowOpen")
     }
 
     /// Returns a frame of the given width and `newContentHeight + chromeHeight`
@@ -287,7 +281,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         settings.log("Settings window closing (isActive=\(NSApp.isActive), keyWindow=\(NSApp.keyWindow?.title ?? "nil"))")
         settingsWindow = nil
         settingsHostingController = nil
-        UserDefaults.standard.set(false, forKey: "settingsWindowOpen")
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {

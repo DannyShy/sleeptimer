@@ -16,6 +16,32 @@ enum SleepTimerLogic {
         guard isActive else { return 0 }
         return Int(ceil(remaining / 60))
     }
+
+    // MARK: - App Intents dialogs
+
+    /// Resolves dialog text in-process (against `bundle`) so the localized string
+    /// is final before it is returned to the invoking process. Each helper uses
+    /// the same literal that previously backed the IntentDialog, so the extracted
+    /// localization keys are unchanged.
+    static func startedDialog(sleepAt: String, bundle: Bundle = .main) -> String {
+        String(localized: "Sleep timer started. Your Mac will sleep at \(sleepAt).", bundle: bundle)
+    }
+
+    static func alreadyRunningDialog(minutes: Int, bundle: Bundle = .main) -> String {
+        String(localized: "A sleep timer is already running. \(minutes) minutes remaining.", bundle: bundle)
+    }
+
+    static func remainingDialog(minutes: Int, bundle: Bundle = .main) -> String {
+        String(localized: "\(minutes) minutes remaining.", bundle: bundle)
+    }
+
+    static func cancelledDialog(bundle: Bundle = .main) -> String {
+        String(localized: "Sleep timer cancelled.", bundle: bundle)
+    }
+
+    static func noTimerDialog(bundle: Bundle = .main) -> String {
+        String(localized: "No sleep timer is running.", bundle: bundle)
+    }
 }
 
 // MARK: - Intents
@@ -42,13 +68,15 @@ struct StartSleepTimerIntent: AppIntent {
             let remaining = SleepTimerLogic.remainingMinutesRoundedUp(
                 remaining: sleepManager.remainingTime,
                 isActive: true)
-            return .result(dialog: "A sleep timer is already running. \(remaining) minutes remaining.")
+            return .result(dialog: IntentDialog(
+                stringLiteral: SleepTimerLogic.alreadyRunningDialog(minutes: remaining)))
         }
         let duration = SleepTimerLogic.resolveDuration(
             minutes: minutes,
             defaultSeconds: SettingsManager.shared.defaultDurationSeconds())
         sleepManager.startTimer(duration: duration)
-        return .result(dialog: "Sleep timer started. Your Mac will sleep at \(sleepManager.sleepAtTime).")
+        return .result(dialog: IntentDialog(
+            stringLiteral: SleepTimerLogic.startedDialog(sleepAt: sleepManager.sleepAtTime)))
     }
 }
 
@@ -64,9 +92,9 @@ struct CancelSleepTimerIntent: AppIntent {
     func perform() async throws -> some IntentResult & ProvidesDialog {
         if sleepManager.isTimerActive {
             sleepManager.cancelTimer()
-            return .result(dialog: "Sleep timer cancelled.")
+            return .result(dialog: IntentDialog(stringLiteral: SleepTimerLogic.cancelledDialog()))
         }
-        return .result(dialog: "No sleep timer is running.")
+        return .result(dialog: IntentDialog(stringLiteral: SleepTimerLogic.noTimerDialog()))
     }
 }
 
@@ -84,8 +112,9 @@ struct GetSleepTimerStatusIntent: AppIntent {
             let remaining = SleepTimerLogic.remainingMinutesRoundedUp(
                 remaining: sleepManager.remainingTime,
                 isActive: true)
-            return .result(value: remaining, dialog: "\(remaining) minutes remaining.")
+            return .result(value: remaining, dialog: IntentDialog(
+                stringLiteral: SleepTimerLogic.remainingDialog(minutes: remaining)))
         }
-        return .result(value: 0, dialog: "No sleep timer is running.")
+        return .result(value: 0, dialog: IntentDialog(stringLiteral: SleepTimerLogic.noTimerDialog()))
     }
 }
