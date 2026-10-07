@@ -16,6 +16,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
     private var cancellables = Set<AnyCancellable>()
     private var settingsShowPending = false
     private var settingsInitialHeightApplied = false
+    // Coalescing flag: several geometry notifications arriving in the same
+    // run loop turn trigger a single popover re-anchor.
+    private var isPopoverReanchorPending = false
 
     override init() {
         super.init()
@@ -66,7 +69,25 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
             button.image = icon
             button.action = #selector(togglePopover(_:))
             button.target = self
+            button.postsFrameChangedNotifications = true
         }
+        // Re-anchor an open popover whenever the status item's geometry
+        // actually changes on screen (the status-bar window is resized/moved
+        // or the button's frame changes). Registered once at status item
+        // setup; notifications arrive after AppKit has laid out the new
+        // geometry.
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(statusItemGeometryDidChange(_:)),
+                                               name: NSView.frameDidChangeNotification,
+                                               object: statusItem.button)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(statusItemGeometryDidChange(_:)),
+                                               name: NSWindow.didResizeNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(statusItemGeometryDidChange(_:)),
+                                               name: NSWindow.didMoveNotification,
+                                               object: nil)
 
         // Wire SettingsManager callbacks
         settings.onTogglePopover = { [weak self] in
@@ -137,6 +158,41 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         }
         statusItem.button?.title = " \(sleepManager.formattedTime())"
         statusItem.length = NSStatusItem.variableLength
+    }
+
+    /// Re-anchors an open popover after the status item's geometry actually
+    /// changed on screen (status-bar window resized/moved or the button's
+    /// frame changed, e.g. countdown title added/removed). Runs asynchronously
+    /// and coalesced, so it positions the popover against the *new* window
+    /// frame; show(relativeTo:of:preferredEdge:) is the documented in-place
+    /// update for an already-shown popover (no close/reopen).
+    private func schedulePopoverReanchor() {
+        guard !isPopoverReanchorPending else { return }
+        isPopoverReanchorPending = true
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.isPopoverReanchorPending = false
+            guard self.popover.isShown, let button = self.statusItem.button else { return }
+            self.popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        }
+    }
+
+    /// Handler for the status item's geometry notifications (registered once
+    /// at status item setup). NSWindow notifications are registered without
+    /// an object filter because button.window may not exist yet at
+    /// registration time; they are filtered here to the status item's own
+    /// window. Notifications are posted by AppKit after it has laid out the
+    /// new geometry, which is what makes this reliable where re-anchoring
+    /// directly from updateMenuBarDisplay() was too early.
+    @objc private func statusItemGeometryDidChange(_ notification: Notification) {
+        switch notification.name {
+        case NSWindow.didResizeNotification, NSWindow.didMoveNotification:
+            guard let window = notification.object as? NSWindow,
+                  window === statusItem.button?.window else { return }
+        default:
+            break // NSView.frameDidChangeNotification, object = status item button
+        }
+        schedulePopoverReanchor()
     }
 
     // MARK: - Popover
