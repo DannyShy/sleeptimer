@@ -8,7 +8,7 @@ struct DozeShortcuts: AppShortcutsProvider {
                 "Start \(.applicationName)",
                 "Start a \(.applicationName) sleep timer"
             ],
-            shortTitle: "Start Sleep Timer",
+            shortTitle: "Start Doze",
             systemImageName: "moon.zzz"
         )
         AppShortcut(
@@ -17,7 +17,7 @@ struct DozeShortcuts: AppShortcutsProvider {
                 "Cancel \(.applicationName)",
                 "Stop the \(.applicationName) timer"
             ],
-            shortTitle: "Cancel Sleep Timer",
+            shortTitle: "Cancel Doze",
             systemImageName: "xmark.circle"
         )
         AppShortcut(
@@ -26,7 +26,7 @@ struct DozeShortcuts: AppShortcutsProvider {
                 "\(.applicationName) status",
                 "How long until \(.applicationName) sleeps"
             ],
-            shortTitle: "Sleep Timer Status",
+            shortTitle: "Doze Status",
             systemImageName: "timer"
         )
     }

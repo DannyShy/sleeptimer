@@ -21,7 +21,7 @@ enum SleepTimerLogic {
 // MARK: - Intents
 
 struct StartSleepTimerIntent: AppIntent {
-    static var title: LocalizedStringResource = "Start Sleep Timer"
+    static var title: LocalizedStringResource = "Start Doze Timer"
     static var description = IntentDescription(
         "Starts a Doze sleep timer. Your Mac sleeps when it ends, after a 60-second warning."
     )
@@ -31,7 +31,7 @@ struct StartSleepTimerIntent: AppIntent {
     var minutes: Int?
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Start sleep timer for \(\.$minutes) minutes")
+        Summary("Start Doze timer for \(\.$minutes) minutes")
     }
 
     @Dependency private var sleepManager: SleepManager
@@ -53,7 +53,7 @@ struct StartSleepTimerIntent: AppIntent {
 }
 
 struct CancelSleepTimerIntent: AppIntent {
-    static var title: LocalizedStringResource = "Cancel Sleep Timer"
+    static var title: LocalizedStringResource = "Cancel Doze Timer"
     static var description = IntentDescription(
         "Cancels the running Doze sleep timer."
     )
@@ -71,7 +71,7 @@ struct CancelSleepTimerIntent: AppIntent {
 }
 
 struct GetSleepTimerStatusIntent: AppIntent {
-    static var title: LocalizedStringResource = "Get Sleep Timer Status"
+    static var title: LocalizedStringResource = "Get Doze Timer Status"
     static var description = IntentDescription(
         "Returns the minutes remaining on the Doze sleep timer, or 0 if none is running."
     )
