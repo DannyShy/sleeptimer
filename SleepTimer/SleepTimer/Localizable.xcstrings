@@ -90,6 +90,30 @@
             }
           }
         },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Restam %lld minutos."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Resta %lld minuto."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Restam %lld minutos."
+                }
+              }
+            }
+          }
+        },
         "sk" : {
           "variations" : {
             "plural" : {
@@ -191,6 +215,30 @@
             }
           }
         },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Já há um timer em andamento. Restam %lld minutos."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Já há um timer em andamento. Resta %lld minuto."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Já há um timer em andamento. Restam %lld minutos."
+                }
+              }
+            }
+          }
+        },
         "sk" : {
           "variations" : {
             "plural" : {
@@ -244,6 +292,12 @@
             "value" : "Annuler la minuterie Doze"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar timer do Doze"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -277,6 +331,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annule la minuterie Doze en cours."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancela o timer do Doze em andamento."
           }
         },
         "sk" : {
@@ -314,6 +374,12 @@
             "value" : "Obtenir l’état de la minuterie Doze"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obter status do timer do Doze"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -347,6 +413,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Minutes"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minutos"
           }
         },
         "sk" : {
@@ -384,6 +456,12 @@
             "value" : "Aucune minuterie en cours."
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum timer em andamento."
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -417,6 +495,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Renvoie les minutes restantes de la minuterie Doze, ou 0 si aucune n’est en cours."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retorna os minutos restantes do timer do Doze, ou 0 se nenhum estiver em andamento."
           }
         },
         "sk" : {
@@ -454,6 +538,12 @@
             "value" : "Minuterie annulée."
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timer cancelado."
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -487,6 +577,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Minuterie démarrée. Le Mac entrera en veille à %@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timer iniciado. O Mac entrará em repouso às %@."
           }
         },
         "sk" : {
@@ -524,6 +620,12 @@
             "value" : "Démarrer la minuterie Doze"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar timer do Doze"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -559,6 +661,12 @@
             "value" : "Démarrer la minuterie Doze pour ${minutes} min"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar timer do Doze por ${minutes} min"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -592,6 +700,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Démarre une minuterie Doze. À la fin, après un avertissement de 60 secondes, le Mac se met en veille."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicia um timer do Doze. Ao terminar, após um aviso de 60 segundos, o Mac entra em repouso."
           }
         },
         "sk" : {

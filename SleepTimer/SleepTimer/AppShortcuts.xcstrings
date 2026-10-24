@@ -28,6 +28,12 @@
             "value" : "Statut de ${applicationName}"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status do ${applicationName}"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -61,6 +67,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annule ${applicationName}"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar ${applicationName}"
           }
         },
         "sk" : {
@@ -98,6 +110,12 @@
             "value" : "Annuler Doze"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar Doze"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -131,6 +149,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "État de Doze"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status do Doze"
           }
         },
         "sk" : {
@@ -168,6 +192,12 @@
             "value" : "Combien de temps reste-t-il sur ${applicationName}"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quanto falta no ${applicationName}"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -201,6 +231,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Démarre ${applicationName}"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar ${applicationName}"
           }
         },
         "sk" : {
@@ -238,6 +274,12 @@
             "value" : "Lance une minuterie ${applicationName}"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar um timer do ${applicationName}"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -273,6 +315,12 @@
             "value" : "Démarrer Doze"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar Doze"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -306,6 +354,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arrête la minuterie ${applicationName}"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parar o timer do ${applicationName}"
           }
         },
         "sk" : {

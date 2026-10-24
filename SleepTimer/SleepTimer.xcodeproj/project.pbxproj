@@ -208,6 +208,7 @@
 				en,
 				es,
 				fr,
+				"pt-BR",
 				sk,
 			);
 			mainGroup = 80BA8CA88610A332A1BEDC81;

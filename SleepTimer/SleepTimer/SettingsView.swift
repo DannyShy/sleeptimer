@@ -23,7 +23,7 @@ private let kLabelW: CGFloat = 160
 // "Slovak", …) and the appLanguage setting remain unchanged.
 private let languageDisplayNames: [String: String] = [
     "English": "English", "Slovak": "Slovenčina", "German": "Deutsch",
-    "French": "Français", "Spanish": "Español"
+    "French": "Français", "Spanish": "Español", "Portuguese": "Português (Brasil)"
 ]
 
 // MARK: - SettingsView
@@ -161,7 +161,7 @@ private struct GeneralTab: View {
     @AppStorage("appLanguage")   private var language     = "English"
     @AppStorage("appAppearance") private var appearance   = "System"
 
-    private let langs = ["English", "Slovak", "German", "French", "Spanish"]
+    private let langs = ["English", "Slovak", "German", "French", "Spanish", "Portuguese"]
     private let modes = ["Light", "Dark", "System"]
 
     var body: some View {

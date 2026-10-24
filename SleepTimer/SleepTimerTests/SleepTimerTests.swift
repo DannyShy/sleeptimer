@@ -306,9 +306,24 @@ final class LocalizationTests: XCTestCase {
         }
     }
 
+    func testAllEntriesCoverEveryRegisteredLanguage() {
+        let allowListedEmptyKeys: Set<String> = ["30 min", "45 min", "1h"]
+        let codes = Set(langToCode.values).subtracting(["en"])
+        for (key, translations) in strings {
+            if translations.isEmpty {
+                XCTAssertTrue(allowListedEmptyKeys.contains(key),
+                              "Key \"\(key)\" has an empty translation map but is not in the allow-list")
+                continue
+            }
+            let missing = codes.filter { translations[$0]?.isEmpty != false }
+            XCTAssertTrue(missing.isEmpty,
+                          "Key \"\(key)\" missing translations for: \(missing.sorted().joined(separator: ", "))")
+        }
+    }
+
     func testBundleLocalizations() {
         let localizations = Set(Bundle.main.localizations)
-        for code in ["sk", "de", "fr", "es"] {
+        for code in ["sk", "de", "fr", "es", "pt-BR"] {
             XCTAssertTrue(localizations.contains(code),
                           "Bundle is missing localization: \(code)")
         }
@@ -510,5 +525,26 @@ final class DialogLocalizationTests: XCTestCase {
         let bundle = languageBundle("en")
         XCTAssertEqual(SleepTimerLogic.remainingDialog(minutes: 1, bundle: bundle), "1 minute remaining.")
         XCTAssertEqual(SleepTimerLogic.remainingDialog(minutes: 5, bundle: bundle), "5 minutes remaining.")
+    }
+
+    func testStartedDialogPortuguese() {
+        let bundle = languageBundle("pt-BR")
+        XCTAssertEqual(
+            SleepTimerLogic.startedDialog(sleepAt: "21:52", bundle: bundle),
+            "Timer iniciado. O Mac entrará em repouso às 21:52.")
+    }
+
+    func testRemainingDialogPortuguesePlurals() throws {
+        // Runtime checks use values whose Portuguese and English plural categories
+        // agree (1 -> one, 5 -> other), because plural-rule selection follows the
+        // process language, not the sub-bundle. The 0 case (one in pt, other in en)
+        // is asserted directly against the compiled stringsdict.
+        let bundle = languageBundle("pt-BR")
+        XCTAssertEqual(SleepTimerLogic.remainingDialog(minutes: 1, bundle: bundle), "Resta 1 minuto.")
+        XCTAssertEqual(SleepTimerLogic.remainingDialog(minutes: 5, bundle: bundle), "Restam 5 minutos.")
+        let variants = try pluralVariants(language: "pt-BR", key: "%lld minutes remaining.")
+        XCTAssertEqual(variants["one"], "Resta %lld minuto.")
+        XCTAssertEqual(variants["many"], "Restam %lld minutos.")
+        XCTAssertEqual(variants["other"], "Restam %lld minutos.")
     }
 }
