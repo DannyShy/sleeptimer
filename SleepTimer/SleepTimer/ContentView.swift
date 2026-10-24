@@ -88,14 +88,14 @@ struct ContentView: View {
                     Divider()
                     Button(L("Quit Doze"))     { NSApplication.shared.terminate(nil) }
                 } label: {
-                    Image(systemName: "gearshape")
+                    Label(L("Options"), systemImage: "gearshape")
+                        .labelStyle(.iconOnly)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(.secondary)
                 }
                 .menuStyle(.borderlessButton)
                 .menuIndicator(.hidden)
                 .fixedSize()
-                .accessibilityLabel(L("Options"))
             }
 
             // ── Segmented Picker ─────────────────────────────────────

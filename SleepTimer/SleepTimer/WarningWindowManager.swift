@@ -1,13 +1,13 @@
 import SwiftUI
 import AppKit
 
-/// Borderless warning overlay window. Plain borderless NSWindows cannot
-/// become key, so the overlay could never receive keyboard events or focus.
-/// This subclass allows key (and main) status so Return/Escape and initial
-/// keyboard/VoiceOver focus work inside the overlay.
-private final class KeyableBorderlessWindow: NSWindow {
+/// Borderless warning overlay panel. A plain borderless NSWindow of an
+/// inactive app can never become key, so the overlay could never receive
+/// keyboard events or focus. A non-activating panel becomes the key window
+/// of its (still inactive) application, so Return/Escape and initial
+/// keyboard/VoiceOver interaction work while another app stays frontmost.
+private final class KeyablePanel: NSPanel {
     override var canBecomeKey: Bool { true }
-    override var canBecomeMain: Bool { true }
 
     /// Escape routing, independent of which control inside the overlay has
     /// focus. The standard key binding maps "␛" to cancelOperation:, which
@@ -35,8 +35,21 @@ class WarningWindowManager: ObservableObject {
         if warningWindow != nil { return }
         let contentView = CountdownWarningDialog().environmentObject(sleepManager)
         let hostingController = NSHostingController(rootView: contentView)
-        let window = KeyableBorderlessWindow(contentViewController: hostingController)
-        window.styleMask = [.borderless, .fullSizeContentView]
+        let window = KeyablePanel(contentViewController: hostingController)
+        // .nonactivatingPanel: the panel becomes key WITHOUT activating Doze,
+        // so keyboard events reach the overlay while another app stays
+        // frontmost (macOS 14+ ignores programmatic activation from a timer).
+        window.styleMask = [.borderless, .fullSizeContentView, .nonactivatingPanel]
+        // Panels default to becoming key only on text-entry clicks and to
+        // hiding while the app is inactive; both are wrong for an overlay.
+        window.becomesKeyOnlyIfNeeded = false
+        window.isFloatingPanel = true
+        window.hidesOnDeactivate = false
+        // hideWarningDialog() nils warningWindow, which drives deallocation;
+        // releasing in close() would double-release under ARC.
+        window.isReleasedWhenClosed = false
+        // VoiceOver's window chooser presents the overlay as a dialog.
+        window.setAccessibilitySubrole(.dialog)
         // Invisible on a borderless window; gives VoiceOver a window name
         // instead of announcing the overlay as "Untitled".
         window.title = "Doze"
@@ -54,7 +67,8 @@ class WarningWindowManager: ObservableObject {
             window.setFrame(screenFrame, display: true)
         }
         window.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
+        // Route keys into the SwiftUI content even before SwiftUI focus settles.
+        window.makeFirstResponder(hostingController.view)
         warningWindow = window
         scheduleWarningAnnouncement(sleepManager: sleepManager)
     }
