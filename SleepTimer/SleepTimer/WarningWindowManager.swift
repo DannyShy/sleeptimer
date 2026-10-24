@@ -48,8 +48,6 @@ class WarningWindowManager: ObservableObject {
         // hideWarningDialog() nils warningWindow, which drives deallocation;
         // releasing in close() would double-release under ARC.
         window.isReleasedWhenClosed = false
-        // VoiceOver's window chooser presents the overlay as a dialog.
-        window.setAccessibilitySubrole(.dialog)
         // Invisible on a borderless window; gives VoiceOver a window name
         // instead of announcing the overlay as "Untitled".
         window.title = "Doze"
@@ -88,7 +86,7 @@ class WarningWindowManager: ObservableObject {
     }
 
     func hideWarningDialog() {
-        warningWindow?.close()
+        warningWindow?.orderOut(nil)
         warningWindow = nil
     }
 

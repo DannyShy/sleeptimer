@@ -88,8 +88,8 @@ struct ContentView: View {
                     Divider()
                     Button(L("Quit Doze"))     { NSApplication.shared.terminate(nil) }
                 } label: {
-                    Label(L("Options"), systemImage: "gearshape")
-                        .labelStyle(.iconOnly)
+                    Image(systemName: "gearshape")
+                        .accessibilityLabel(L("Options"))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(.secondary)
                 }
