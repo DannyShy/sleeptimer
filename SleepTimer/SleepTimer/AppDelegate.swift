@@ -180,9 +180,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
     /// Re-anchors an open popover after the status item's geometry actually
     /// changed on screen (status-bar window resized/moved or the button's
     /// frame changed, e.g. countdown title added/removed). Runs asynchronously
-    /// and coalesced, so it positions the popover against the *new* window
-    /// frame; show(relativeTo:of:preferredEdge:) is the documented in-place
-    /// update for an already-shown popover (no close/reopen).
+    /// and coalesced, so it updates the positioning rect against the *new*
+    /// geometry. Calling show(relativeTo:of:preferredEdge:) on an
+    /// already-shown popover severs its .transient auto-dismissal (outside
+    /// clicks would no longer close it), so the re-anchor only mutates
+    /// positioningRect, which NSPopover applies while shown.
     private func schedulePopoverReanchor() {
         guard !isPopoverReanchorPending else { return }
         isPopoverReanchorPending = true
@@ -190,7 +192,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
             guard let self else { return }
             self.isPopoverReanchorPending = false
             guard self.popover.isShown, let button = self.statusItem.button else { return }
-            self.popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            self.popover.positioningRect = button.bounds
         }
     }
 
@@ -219,8 +221,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         if popover.isShown {
             popover.performClose(sender)
         } else {
-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            // Activate before showing so the popover's window can become
+            // key: a transient popover only auto-dismisses on outside clicks
+            // when its window is key. makeKey() after show makes that
+            // explicit even if the activation order alone is not enough.
             NSApp.activate(ignoringOtherApps: true)
+            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            popover.contentViewController?.view.window?.makeKey()
         }
     }
 
