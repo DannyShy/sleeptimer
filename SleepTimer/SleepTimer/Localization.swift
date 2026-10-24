@@ -33,6 +33,8 @@ let strings: [String: [String: String]] = [
     "30 min": [:],
     "45 min": [:],
     "1h": [:],
+    "%d min": [:],
+    "%d s": [:],
     "Custom": [
         "sk": "Vlastné", "de": "Benutzerdefiniert",
         "fr": "Personnalisé", "es": "Personalizado",
@@ -244,6 +246,63 @@ let strings: [String: [String: String]] = [
         "sk": "Odložiť o 5 minút", "de": "5 Minuten schlummern",
         "fr": "Reporter de 5 minutes", "es": "Posponer 5 minutos",
         "pt-BR": "Adiar 5 minutos"
+    ],
+
+    // ── Accessibility (VoiceOver, phase 1) ──────────────────────
+    "Options": [
+        "sk": "Možnosti", "de": "Optionen",
+        "fr": "Options", "es": "Opciones",
+        "pt-BR": "Opções"
+    ],
+    "Duration": [
+        "sk": "Dĺžka", "de": "Dauer",
+        "fr": "Durée", "es": "Duración",
+        "pt-BR": "Duração"
+    ],
+    "Progress": [
+        "sk": "Priebeh", "de": "Fortschritt",
+        "fr": "Progression", "es": "Progreso",
+        "pt-BR": "Progresso"
+    ],
+    "Hours": [
+        "sk": "Hodiny", "de": "Stunden",
+        "fr": "Heures", "es": "Horas",
+        "pt-BR": "Horas"
+    ],
+    "Minutes": [
+        "sk": "Minúty", "de": "Minuten",
+        "fr": "Minutes", "es": "Minutos",
+        "pt-BR": "Minutos"
+    ],
+    "Increase hours": [
+        "sk": "Zvýšiť hodiny", "de": "Stunden erhöhen",
+        "fr": "Augmenter les heures", "es": "Aumentar horas",
+        "pt-BR": "Aumentar horas"
+    ],
+    "Decrease hours": [
+        "sk": "Znížiť hodiny", "de": "Stunden verringern",
+        "fr": "Diminuer les heures", "es": "Disminuir horas",
+        "pt-BR": "Disminuir horas"
+    ],
+    "Increase minutes": [
+        "sk": "Zvýšiť minúty", "de": "Minuten erhöhen",
+        "fr": "Augmenter les minutes", "es": "Aumentar minutos",
+        "pt-BR": "Aumentar minutos"
+    ],
+    "Decrease minutes": [
+        "sk": "Znížiť minúty", "de": "Minuten verringern",
+        "fr": "Diminuer les minutes", "es": "Disminuir minutos",
+        "pt-BR": "Disminuir minutos"
+    ],
+    "Clear shortcut": [
+        "sk": "Vymazať skratku", "de": "Kurzbefehl löschen",
+        "fr": "Effacer le raccourci", "es": "Borrar atajo",
+        "pt-BR": "Limpar atalho"
+    ],
+    "Press to record a new shortcut.": [
+        "sk": "Stlačením nahráte novú skratku.", "de": "Drücken, um einen neuen Kurzbefehl aufzunehmen.",
+        "fr": "Appuyez pour enregistrer un nouveau raccourci.", "es": "Pulse para grabar un nuevo atajo.",
+        "pt-BR": "Pressione para gravar um novo atalho."
     ],
 ]
 

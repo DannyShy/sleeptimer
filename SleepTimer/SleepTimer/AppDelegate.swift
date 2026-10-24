@@ -20,6 +20,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
     // run loop turn trigger a single popover re-anchor.
     private var isPopoverReanchorPending = false
 
+    // Last accessibility value published for the status item (menu bar
+    // countdown); used to update VoiceOver value only when it changes.
+    private var lastMenuBarAccessibilityValue: String?
+
     override init() {
         super.init()
         // Register the app's SleepManager for App Intents (Shortcuts) as early
@@ -154,10 +158,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
         guard show, sleepManager.isTimerActive else {
             statusItem.button?.title = ""
             statusItem.length = NSStatusItem.squareLength
+            statusItem.button?.setAccessibilityLabel(nil)
+            statusItem.button?.setAccessibilityValue(nil)
+            lastMenuBarAccessibilityValue = nil
             return
         }
         statusItem.button?.title = " \(sleepManager.formattedTime())"
         statusItem.length = NSStatusItem.variableLength
+
+        // VoiceOver reads the status item as "<label>, <value>". The coarse
+        // value changes at most once per minute (per 10 s in the final
+        // minute), so it is updated only when it actually changes instead of
+        // every second.
+        let value = SleepManager.accessibilityTimeValue(seconds: max(0, Int(sleepManager.remainingTime)))
+        guard value != lastMenuBarAccessibilityValue else { return }
+        lastMenuBarAccessibilityValue = value
+        statusItem.button?.setAccessibilityLabel("Doze")
+        statusItem.button?.setAccessibilityValue(value)
     }
 
     /// Re-anchors an open popover after the status item's geometry actually

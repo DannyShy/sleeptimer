@@ -95,6 +95,7 @@ struct ContentView: View {
                 .menuStyle(.borderlessButton)
                 .menuIndicator(.hidden)
                 .fixedSize()
+                .accessibilityLabel(L("Options"))
             }
 
             // ── Segmented Picker ─────────────────────────────────────
@@ -104,6 +105,7 @@ struct ContentView: View {
             .pickerStyle(.segmented)
             .disabled(sleepManager.isTimerActive)
             .id(settings.appLanguage)
+            .accessibilityLabel(L("Duration"))
 
             // ── Center block ─────────────────────────────────────────
             if showCustomInput {
@@ -119,7 +121,8 @@ struct ContentView: View {
                     .minimumScaleFactor(0.7)
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 12)
-                    .accessibilityLabel(L("Time remaining"))
+                    .accessibilityLabel(sleepManager.isTimerActive ? L("Time remaining") : L("Duration"))
+                    .accessibilityValue(SleepManager.accessibilityTimeValue(seconds: sleepManager.isTimerActive ? Int(sleepManager.remainingTime) : Int(currentDuration)))
                     .transition(.opacity)
             }
 
@@ -135,12 +138,17 @@ struct ContentView: View {
                     }
                 }
                 .frame(height: 4)
+                .accessibilityElement()
+                .accessibilityLabel(L("Progress"))
+                .accessibilityValue("\(min(100, max(0, Int((sleepManager.progress * 100).rounded()))))%")
+                .accessibilityHidden(!sleepManager.isTimerActive)
             }
 
             // ── Sleep-at footer ──────────────────────────────────────
             Text("\(L("Mac will sleep at")) **\(sleepManager.isTimerActive ? sleepManager.sleepAtTime : sleepAtPreview)**")
                 .font(.callout)
                 .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
 
             // ── Start / Cancel ───────────────────────────────────────
@@ -151,6 +159,7 @@ struct ContentView: View {
                 Text(sleepManager.isTimerActive ? L("Cancel") : L("Start Timer"))
                     .font(.headline.weight(.semibold))
                     .foregroundColor(sleepManager.isTimerActive ? .primary : .white)
+                    .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 13)
                     .background(
@@ -215,12 +224,15 @@ struct ContentView: View {
     private var customInputBlock: some View {
         HStack(spacing: 10) {
             Spacer()
-            TimeInputBox(value: $customHours, range: 0...99, label: L("HOURS"))
+            TimeInputBox(value: $customHours, range: 0...99, label: L("HOURS"), axLabel: L("Hours"),
+                         increaseLabel: L("Increase hours"), decreaseLabel: L("Decrease hours"))
             Text(":")
                 .font(.system(size: 48, weight: .bold, design: .rounded))
                 .foregroundStyle(.primary)
                 .offset(y: -10)
-            TimeInputBox(value: $customMinutes, range: 0...99, label: L("MINUTES"))
+                .accessibilityHidden(true)
+            TimeInputBox(value: $customMinutes, range: 0...99, label: L("MINUTES"), axLabel: L("Minutes"),
+                         increaseLabel: L("Increase minutes"), decreaseLabel: L("Decrease minutes"))
             Spacer()
         }
     }
@@ -232,6 +244,9 @@ private struct TimeInputBox: View {
     @Binding var value: Int
     let range: ClosedRange<Int>
     let label: String
+    let axLabel: String
+    let increaseLabel: String
+    let decreaseLabel: String
 
     @State private var text = ""
     @FocusState private var isFocused: Bool
@@ -248,10 +263,19 @@ private struct TimeInputBox: View {
                     .focused($isFocused)
                     .frame(maxWidth: .infinity)
                     .onSubmit { formatText() }
+                    .accessibilityLabel(axLabel)
+                    .accessibilityValue("\(value)")
+                    .accessibilityAdjustableAction { direction in
+                        switch direction {
+                        case .increment: wrap(+1)
+                        case .decrement: wrap(-1)
+                        @unknown default: break
+                        }
+                    }
 
                 VStack(spacing: 2) {
-                    stepButton("chevron.up")   { wrap(+1) }
-                    stepButton("chevron.down") { wrap(-1) }
+                    stepButton("chevron.up", label: increaseLabel) { wrap(+1) }
+                    stepButton("chevron.down", label: decreaseLabel) { wrap(-1) }
                 }
             }
             .padding(.horizontal, 12)
@@ -291,7 +315,7 @@ private struct TimeInputBox: View {
         text = String(format: "%02d", value)
     }
 
-    private func stepButton(_ icon: String, action: @escaping () -> Void) -> some View {
+    private func stepButton(_ icon: String, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.system(size: 10, weight: .semibold))
@@ -300,6 +324,7 @@ private struct TimeInputBox: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(label)
     }
 
     private func wrap(_ delta: Int) {

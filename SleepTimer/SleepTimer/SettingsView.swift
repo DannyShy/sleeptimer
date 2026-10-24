@@ -44,6 +44,7 @@ struct SettingsView: View {
                 VStack(spacing: 0) {
                     Text(L("Doze Settings"))
                         .font(.system(size: 13, weight: .semibold))
+                        .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
                         .frame(height: 28)
 
@@ -147,6 +148,7 @@ private struct STabButton: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityAddTraits(active ? [.isSelected] : [])
         .onHover { isHovering = $0 }
         .animation(.easeInOut(duration: 0.12), value: isHovering)
     }
@@ -175,6 +177,7 @@ private struct GeneralTab: View {
                     .gridColumnAlignment(.trailing)
                 Toggle("", isOn: $openAtLogin)
                     .toggleStyle(.checkbox).labelsHidden()
+                    .accessibilityLabel(L("Open at Login"))
                     .gridColumnAlignment(.leading)
             }
             GridRow {
@@ -182,6 +185,7 @@ private struct GeneralTab: View {
                     .multilineTextAlignment(.trailing)
                     .fixedSize(horizontal: false, vertical: true)
                 Toggle("", isOn: $showDockIcon).toggleStyle(.checkbox).labelsHidden()
+                    .accessibilityLabel(L("Show Icon in Dock"))
             }
             GridRow {
                 Text(L("Language")).foregroundStyle(.secondary)
@@ -191,6 +195,7 @@ private struct GeneralTab: View {
                     ForEach(langs, id: \.self) { Text(languageDisplayNames[$0] ?? $0).tag($0) }
                 }
                 .labelsHidden().frame(width: 150, alignment: .leading)
+                .accessibilityLabel(L("Language"))
                 .gridColumnAlignment(.leading)
             }
             GridRow {
@@ -204,6 +209,7 @@ private struct GeneralTab: View {
                 }
                 .labelsHidden().pickerStyle(.segmented).frame(width: 195)
                 .id(settings.appLanguage)
+                .accessibilityLabel(L("Appearance"))
             }
         }
         .onChange(of: openAtLogin)  { _, val in SettingsManager.shared.setOpenAtLogin(val) }
@@ -237,6 +243,7 @@ private struct TimerTab: View {
                     ForEach(durations, id: \.self) { Text(L($0)).tag($0) }
                 }
                 .labelsHidden().frame(width: 150, alignment: .leading)
+                .accessibilityLabel(L("Default Duration"))
                 .gridColumnAlignment(.leading)
             }
             GridRow {
@@ -314,18 +321,42 @@ private struct Pill: View {
     @State private var displayText = ""
 
     var body: some View {
-        HStack(spacing: 6) {
-            Group {
-                if recording {
-                    Text(L("Type shortcut…")).italic().foregroundStyle(.tertiary)
-                } else if displayText.isEmpty {
-                    Text(L("None")).foregroundStyle(.tertiary)
-                } else {
-                    Text(displayText).font(.system(.body, design: .monospaced)).fontWeight(.medium)
+        ZStack(alignment: .trailing) {
+            // The pill itself is a real Button so VoiceOver and the keyboard
+            // (Tab + Space/Return) can activate it. The xmark clear button is
+            // a SIBLING (not nested in this Button's label): overlapping
+            // sibling buttons hit-test front-most-first, so clicking the
+            // xmark only clears and never starts recording.
+            Button(action: toggleRecording) {
+                HStack(spacing: 6) {
+                    Group {
+                        if recording {
+                            Text(L("Type shortcut…")).italic().foregroundStyle(.tertiary)
+                        } else if displayText.isEmpty {
+                            Text(L("None")).foregroundStyle(.tertiary)
+                        } else {
+                            Text(displayText).font(.system(.body, design: .monospaced)).fontWeight(.medium)
+                        }
+                    }
+                    .animation(.easeInOut(duration: 0.15), value: recording)
+                    Spacer(minLength: 0)
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 7)
+                .frame(width: 210)
+                .background(recording ? Color.accentColor.opacity(0.10) : Color.secondary.opacity(0.10))
+                .clipShape(Capsule())
+                .overlay(Capsule().strokeBorder(
+                    recording ? Color.accentColor : Color(NSColor.separatorColor),
+                    lineWidth: recording ? 1.5 : 0.5
+                ))
+                .contentShape(Capsule())
             }
-            .animation(.easeInOut(duration: 0.15), value: recording)
-            Spacer(minLength: 0)
+            .buttonStyle(.plain)
+            .accessibilityLabel(rowLabel)
+            .accessibilityValue(recording ? L("Type shortcut…") : (displayText.isEmpty ? L("None") : displayText))
+            .accessibilityHint(L("Press to record a new shortcut."))
+
             if !displayText.isEmpty && !recording {
                 Button {
                     withAnimation(.easeInOut(duration: 0.15)) { clearShortcut() }
@@ -333,21 +364,17 @@ private struct Pill: View {
                     Image(systemName: "xmark.circle.fill").font(.system(size: 13)).foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(L("Clear shortcut"))
+                .padding(.trailing, 12)
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 7)
-        .frame(width: 210)
-        .background(recording ? Color.accentColor.opacity(0.10) : Color.secondary.opacity(0.10))
-        .clipShape(Capsule())
-        .overlay(Capsule().strokeBorder(
-            recording ? Color.accentColor : Color(NSColor.separatorColor),
-            lineWidth: recording ? 1.5 : 0.5
-        ))
-        .contentShape(Capsule())
-        .onTapGesture { toggleRecording() }
         .onAppear { refreshDisplay() }
         .onDisappear { stopRecording() }
+    }
+
+    /// Row label this pill belongs to (used as its accessibility label).
+    private var rowLabel: String {
+        name == .showDoze ? L("Show Doze") : L("Start Default Timer")
     }
 
     private func toggleRecording() {

@@ -126,3 +126,23 @@ extension SleepManager {
         !wasActive && isActive && settingEnabled
     }
 }
+
+// MARK: - Accessibility time value (pure, testable)
+
+extension SleepManager {
+    /// VoiceOver-friendly coarse description of a remaining time: whole
+    /// minutes at ≥ 60 s, otherwise seconds rounded UP to the nearest 10 s
+    /// (0 → 0, 1…10 → 10, … 51…59 → 60). Because the result only changes once
+    /// per minute (per 10 s in the final minute), it is safe as an
+    /// accessibility value — VoiceOver does not re-announce every second.
+    /// Visual countdowns keep second precision. Format keys "%d min" / "%d s"
+    /// are language-neutral (empty translation maps, like "30 min").
+    static func accessibilityTimeValue(seconds: Int) -> String {
+        let s = max(0, seconds)
+        if s >= 60 {
+            return String(format: L("%d min"), s / 60)
+        }
+        let rounded = ((s + 9) / 10) * 10
+        return String(format: L("%d s"), rounded)
+    }
+}

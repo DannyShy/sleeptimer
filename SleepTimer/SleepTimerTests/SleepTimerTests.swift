@@ -293,7 +293,7 @@ final class LocalizationTests: XCTestCase {
     }
 
     func testAllEntriesHaveAllLanguages() {
-        let allowListedEmptyKeys: Set<String> = ["30 min", "45 min", "1h"]
+        let allowListedEmptyKeys: Set<String> = ["30 min", "45 min", "1h", "%d min", "%d s"]
         for (key, translations) in strings {
             if translations.isEmpty {
                 XCTAssertTrue(allowListedEmptyKeys.contains(key),
@@ -307,7 +307,7 @@ final class LocalizationTests: XCTestCase {
     }
 
     func testAllEntriesCoverEveryRegisteredLanguage() {
-        let allowListedEmptyKeys: Set<String> = ["30 min", "45 min", "1h"]
+        let allowListedEmptyKeys: Set<String> = ["30 min", "45 min", "1h", "%d min", "%d s"]
         let codes = Set(langToCode.values).subtracting(["en"])
         for (key, translations) in strings {
             if translations.isEmpty {
@@ -546,5 +546,52 @@ final class DialogLocalizationTests: XCTestCase {
         XCTAssertEqual(variants["one"], "Resta %lld minuto.")
         XCTAssertEqual(variants["many"], "Restam %lld minutos.")
         XCTAssertEqual(variants["other"], "Restam %lld minutos.")
+    }
+}
+
+// MARK: - Accessibility Time Value Tests
+
+final class AccessibilityTimeValueTests: XCTestCase {
+
+    func testMinutesAboveMinute() {
+        XCTAssertEqual(SleepManager.accessibilityTimeValue(seconds: 1799), "29 min")
+    }
+
+    func testExactlyOneMinute() {
+        XCTAssertEqual(SleepManager.accessibilityTimeValue(seconds: 60), "1 min")
+    }
+
+    func test59RoundsUpTo60Seconds() {
+        XCTAssertEqual(SleepManager.accessibilityTimeValue(seconds: 59), "60 s")
+    }
+
+    func test45RoundsUpTo50Seconds() {
+        XCTAssertEqual(SleepManager.accessibilityTimeValue(seconds: 45), "50 s")
+    }
+
+    func test10SecondsStays10() {
+        XCTAssertEqual(SleepManager.accessibilityTimeValue(seconds: 10), "10 s")
+    }
+
+    func test1RoundsUpTo10Seconds() {
+        XCTAssertEqual(SleepManager.accessibilityTimeValue(seconds: 1), "10 s")
+    }
+
+    func testZero() {
+        XCTAssertEqual(SleepManager.accessibilityTimeValue(seconds: 0), "0 s")
+    }
+
+    // Additional boundary coverage
+
+    func test41RoundsUpTo50Seconds() {
+        XCTAssertEqual(SleepManager.accessibilityTimeValue(seconds: 41), "50 s")
+    }
+
+    func test51RoundsUpTo60Seconds() {
+        XCTAssertEqual(SleepManager.accessibilityTimeValue(seconds: 51), "60 s")
+    }
+
+    func test61IsOneMinute() {
+        XCTAssertEqual(SleepManager.accessibilityTimeValue(seconds: 61), "1 min")
     }
 }
