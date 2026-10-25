@@ -292,6 +292,38 @@ final class LocalizationTests: XCTestCase {
         XCTAssertEqual(L("nonexistent_key_xyz"), "nonexistent_key_xyz")
     }
 
+    // MARK: System language option
+
+    func testResolveSystemLanguage() {
+        XCTAssertEqual(LanguageResolver.resolveSystemLanguage(preferred: ["de-AT", "en"]), "German")
+        XCTAssertEqual(LanguageResolver.resolveSystemLanguage(preferred: ["de_AT"]), "German")
+        XCTAssertEqual(LanguageResolver.resolveSystemLanguage(preferred: ["pt-PT"]), "Portuguese")
+        XCTAssertEqual(LanguageResolver.resolveSystemLanguage(preferred: ["pt"]), "Portuguese")
+        XCTAssertEqual(LanguageResolver.resolveSystemLanguage(preferred: ["pt-BR"]), "Portuguese")
+        XCTAssertEqual(LanguageResolver.resolveSystemLanguage(preferred: ["cs-CZ", "sk-SK"]), "Slovak")
+        XCTAssertEqual(LanguageResolver.resolveSystemLanguage(preferred: ["cs-CZ", "en-US"]), "English")
+        XCTAssertEqual(LanguageResolver.resolveSystemLanguage(preferred: ["cs-CZ"]), "English")
+        XCTAssertEqual(LanguageResolver.resolveSystemLanguage(preferred: ["ja-JP", "fr-CA"]), "French")
+        XCTAssertEqual(LanguageResolver.resolveSystemLanguage(preferred: ["es-419"]), "Spanish")
+        XCTAssertEqual(LanguageResolver.resolveSystemLanguage(preferred: []), "English")
+    }
+
+    func testEffectiveLanguageCode() {
+        XCTAssertEqual(effectiveLanguageCode(stored: nil, preferred: ["de-DE"]), "de")
+        XCTAssertEqual(effectiveLanguageCode(stored: "System", preferred: ["sk-SK"]), "sk")
+        XCTAssertEqual(effectiveLanguageCode(stored: "Slovak", preferred: ["de-DE"]), "sk")
+        XCTAssertEqual(effectiveLanguageCode(stored: "English", preferred: ["de-DE"]), "en")
+        XCTAssertEqual(effectiveLanguageCode(stored: "System", preferred: ["cs-CZ"]), "en")
+    }
+
+    func testLanguageMigrationDefaultsToSystem() {
+        UserDefaults.standard.removeObject(forKey: "appLanguage")
+        // No registered default may mask the "never set" state…
+        XCTAssertNil(UserDefaults.standard.object(forKey: "appLanguage"))
+        // …and the app's initial value resolves to System.
+        XCTAssertEqual(UserDefaults.standard.string(forKey: "appLanguage") ?? "System", "System")
+    }
+
     func testAllEntriesHaveAllLanguages() {
         let allowListedEmptyKeys: Set<String> = ["30 min", "45 min", "1h", "%d min", "%d s"]
         for (key, translations) in strings {

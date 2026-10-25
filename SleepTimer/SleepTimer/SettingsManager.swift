@@ -9,7 +9,7 @@ final class SettingsManager: ObservableObject {
     static let shared = SettingsManager()
 
     // MARK: - Language (instant hot-reload)
-    @Published var appLanguage: String = UserDefaults.standard.string(forKey: "appLanguage") ?? "English"
+    @Published var appLanguage: String = UserDefaults.standard.string(forKey: "appLanguage") ?? "System"
 
     // MARK: - Appearance (instant hot-reload)
     @Published var appAppearance: String = UserDefaults.standard.string(forKey: "appAppearance") ?? "System"
@@ -39,7 +39,6 @@ final class SettingsManager: ObservableObject {
         UserDefaults.standard.register(defaults: [
             "openAtLogin": false,
             "showDockIcon": false,
-            "appLanguage": "English",
             "appAppearance": "System",
             "defaultDuration": "30 min",
             "warningSoundEnabled": true,
@@ -278,6 +277,7 @@ final class SettingsManager: ObservableObject {
             let value = defaults.object(forKey: key)
             lines.append("\(key): \(value ?? "nil")")
         }
+        lines.append("appLanguage (resolved): \(effectiveLanguageCode(stored: defaults.string(forKey: "appLanguage"), preferred: Locale.preferredLanguages))")
         lines.append("shortcutShowDoze: \(KeyboardShortcuts.getShortcut(for: .showDoze)?.description ?? "none")")
         lines.append("shortcutStartDefaultTimer: \(KeyboardShortcuts.getShortcut(for: .startDefaultTimer)?.description ?? "none")")
         lines.append("")

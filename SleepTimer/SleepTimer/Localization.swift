@@ -312,13 +312,50 @@ let langToCode: [String: String] = [
     "French": "fr", "Spanish": "es", "Portuguese": "pt-BR"
 ]
 
+/// Resolves the stored "System" option to a concrete picker value by walking
+/// the user's preferred languages in order and taking the first one Doze
+/// supports; English when none matches.
+enum LanguageResolver {
+    /// Base-language part ("de-AT", "de_AT" → "de"); pt with any region → Portuguese.
+    private static func map(_ identifier: String) -> String? {
+        switch identifier.lowercased() {
+        case "en":     return "English"
+        case "sk":     return "Slovak"
+        case "de":     return "German"
+        case "fr":     return "French"
+        case "es":     return "Spanish"
+        case "pt":     return "Portuguese"
+        default:       return nil   // cs, ja, … fall through to the next preference
+        }
+    }
+
+    static func resolveSystemLanguage(preferred: [String]) -> String {
+        for identifier in preferred {
+            let base = identifier.split(whereSeparator: { $0 == "-" || $0 == "_" })
+                .first.map(String.init) ?? identifier
+            if let hit = map(base) { return hit }
+        }
+        return "English"
+    }
+}
+
+/// Effective language code for `L()`: nil or "System" resolves via the user's
+/// preferred languages; any other stored value maps through langToCode.
+func effectiveLanguageCode(stored: String?, preferred: [String]) -> String {
+    if stored == nil || stored == "System" {
+        return langToCode[LanguageResolver.resolveSystemLanguage(preferred: preferred)] ?? "en"
+    }
+    return langToCode[stored!] ?? "en"
+}
+
 /// Look up a localized string at runtime. Returns the English key if no translation exists.
 func L(_ key: String) -> String {
     #if DEBUG
     if strings[key] == nil { print("⚠️ Missing localization key: \"\(key)\"") }
     #endif
-    let lang = UserDefaults.standard.string(forKey: "appLanguage") ?? "English"
-    let code = langToCode[lang] ?? "en"
+    let code = effectiveLanguageCode(
+        stored: UserDefaults.standard.string(forKey: "appLanguage"),
+        preferred: Locale.preferredLanguages)
     if code == "en" { return key }
     return strings[key]?[code] ?? key
 }

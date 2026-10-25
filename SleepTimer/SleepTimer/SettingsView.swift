@@ -160,10 +160,10 @@ private struct GeneralTab: View {
     @ObservedObject private var settings = SettingsManager.shared
     @AppStorage("openAtLogin")   private var openAtLogin  = false
     @AppStorage("showDockIcon")  private var showDockIcon = false
-    @AppStorage("appLanguage")   private var language     = "English"
+    @AppStorage("appLanguage")   private var language     = "System"
     @AppStorage("appAppearance") private var appearance   = "System"
 
-    private let langs = ["English", "Slovak", "German", "French", "Spanish", "Portuguese"]
+    private let langs = ["System", "English", "Slovak", "German", "French", "Spanish", "Portuguese"]
     private let modes = ["Light", "Dark", "System"]
 
     var body: some View {
@@ -192,9 +192,13 @@ private struct GeneralTab: View {
                     .multilineTextAlignment(.trailing)
                     .fixedSize(horizontal: false, vertical: true)
                 Picker("", selection: $language) {
-                    ForEach(langs, id: \.self) { Text(languageDisplayNames[$0] ?? $0).tag($0) }
+                    ForEach(langs, id: \.self) { lang in
+                        Text(lang == "System" ? L("System") : languageDisplayNames[lang] ?? lang)
+                            .tag(lang)
+                    }
                 }
                 .labelsHidden().frame(width: 150, alignment: .leading)
+                .id(settings.appLanguage)
                 .accessibilityLabel(L("Language"))
                 .gridColumnAlignment(.leading)
             }
