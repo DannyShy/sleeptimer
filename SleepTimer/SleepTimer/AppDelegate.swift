@@ -317,24 +317,32 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSWindowD
     /// content height matches, keeping the top edge fixed.
     private func settingsHeightChanged(_ contentHeight: CGFloat) {
         guard contentHeight > 0, let window = settingsWindow else { return }
-        let contentRect = window.contentRect(forFrameRect: window.frame)
-        let chromeHeight = window.frame.height - contentRect.height
-        let newFrame = Self.topAnchoredFrame(current: window.frame,
-                                             newContentHeight: contentHeight,
-                                             chromeHeight: chromeHeight,
-                                             width: window.frame.width)
-        window.minSize = newFrame.size
-        window.maxSize = newFrame.size
-        if newFrame != window.frame {
-            let animate = window.isVisible && settingsInitialHeightApplied
-            window.setFrame(newFrame, display: true, animate: animate)
-        }
-        #if DEBUG
-        print("📐 Settings content height: \(Int(contentHeight)) pt (window frame \(Int(newFrame.height)) pt)")
-        #endif
-        settingsInitialHeightApplied = true
-        if settingsShowPending {
-            revealPendingSettingsWindow()
+        // Applying the height must happen outside the SwiftUI layout/update
+        // pass: setFrame called synchronously from an onPreferenceChange
+        // callback reenters layout and triggers _NSDetectedLayoutRecursion
+        // on first open and on every tab switch. Defer by one run-loop turn.
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.settingsWindow === window else { return }
+            // Recompute from the current frame at apply time.
+            let contentRect = window.contentRect(forFrameRect: window.frame)
+            let chromeHeight = window.frame.height - contentRect.height
+            let newFrame = Self.topAnchoredFrame(current: window.frame,
+                                                 newContentHeight: contentHeight,
+                                                 chromeHeight: chromeHeight,
+                                                 width: window.frame.width)
+            window.minSize = newFrame.size
+            window.maxSize = newFrame.size
+            if newFrame != window.frame {
+                let animate = window.isVisible && self.settingsInitialHeightApplied
+                window.setFrame(newFrame, display: true, animate: animate)
+            }
+            #if DEBUG
+            print("📐 Settings content height: \(Int(contentHeight)) pt (window frame \(Int(newFrame.height)) pt)")
+            #endif
+            self.settingsInitialHeightApplied = true
+            if self.settingsShowPending {
+                self.revealPendingSettingsWindow()
+            }
         }
     }
 
