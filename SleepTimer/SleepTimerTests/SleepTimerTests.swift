@@ -547,6 +547,31 @@ final class DialogLocalizationTests: XCTestCase {
         XCTAssertEqual(variants["many"], "Restam %lld minutos.")
         XCTAssertEqual(variants["other"], "Restam %lld minutos.")
     }
+
+    /// Every localization of every App Shortcuts phrase must differ from the
+    /// English key — guards against phrases shipping untranslated.
+    func testAppShortcutsTranslatedInAllLanguages() {
+        let keys = [
+            "Start ${applicationName}",
+            "Start a ${applicationName} sleep timer",
+            "Cancel ${applicationName}",
+            "Stop the ${applicationName} timer",
+            "${applicationName} status",
+            "How long until ${applicationName} sleeps",
+            "Start Doze",
+            "Cancel Doze",
+            "Doze Status",
+        ]
+        for code in ["sk", "de", "fr", "es", "pt-BR"] {
+            let bundle = languageBundle(code)
+            for key in keys {
+                XCTAssertNotEqual(
+                    bundle.localizedString(forKey: key, value: key, table: "AppShortcuts"),
+                    key,
+                    "AppShortcuts key untranslated in \(code): \(key)")
+            }
+        }
+    }
 }
 
 // MARK: - Accessibility Time Value Tests

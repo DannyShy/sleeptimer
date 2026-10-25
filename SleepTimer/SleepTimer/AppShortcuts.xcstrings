@@ -37,7 +37,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "${applicationName} status"
+            "value" : "Stav ${applicationName}"
           }
         }
       }
@@ -78,7 +78,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cancel ${applicationName}"
+            "value" : "Zrušiť ${applicationName}"
           }
         }
       }
@@ -201,7 +201,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "How long until ${applicationName} sleeps"
+            "value" : "Koľko zostáva na časovači ${applicationName}"
           }
         }
       }
@@ -242,7 +242,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Start ${applicationName}"
+            "value" : "Spustiť ${applicationName}"
           }
         }
       }
@@ -283,7 +283,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Start a ${applicationName} sleep timer"
+            "value" : "Spustiť časovač ${applicationName}"
           }
         }
       }
@@ -365,7 +365,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stop the ${applicationName} timer"
+            "value" : "Zastaviť časovač ${applicationName}"
           }
         }
       }
